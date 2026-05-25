@@ -1105,7 +1105,7 @@ export default function Home() {
 				}
 			);
 
-			gsap.fromTo("#enfermedades-list .list-card",
+			gsap.fromTo("#tratamientos .list-card",
 				{ opacity: 0, y: 50 },
 				{
 					opacity: 1,
@@ -1114,7 +1114,7 @@ export default function Home() {
 					ease: "power3.out",
 					stagger: 0.18,
 					scrollTrigger: {
-						trigger: "#enfermedades-list",
+						trigger: "#tratamientos",
 						start: "top 75%",
 						toggleActions: "play none none none"
 					}
@@ -1465,7 +1465,7 @@ export default function Home() {
 											Agendar cita
 										</a>
 										<a
-											href="#nosotros"
+											href="#enfermedades"
 											className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-white bg-white/5 backdrop-blur-sm border border-white/20 hover:bg-white hover:text-[#054273] shadow-md transition-all duration-300"
 										>
 											Enfermedades que tratamos
