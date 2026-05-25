@@ -1662,7 +1662,7 @@ export default function Home() {
 				</section>
 
 				{/* Section: List of enfermedades treated */}
-				<section id="enfermedades-list" className="py-28 px-6 md:px-12 relative overflow-hidden bg-black flex items-center min-h-screen">
+				<section id="tratamientos" className="py-28 px-6 md:px-12 relative overflow-hidden bg-black flex items-center min-h-screen">
 					{/* Background Image */}
 					<div className="section4-bg-image absolute inset-0 z-0 scale-125">
 						<Image
