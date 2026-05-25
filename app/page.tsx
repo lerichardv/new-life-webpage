@@ -742,7 +742,9 @@ export default function Home() {
 		const ScrollTrigger = (window as any).ScrollTrigger;
 		const ScrollSmoother = (window as any).ScrollSmoother;
 		if (ScrollTrigger) {
-			if (ScrollSmoother) {
+			const isMobile = window.matchMedia("(max-width: 1024px)").matches || ScrollTrigger.isTouch === 1;
+
+			if (ScrollSmoother && !isMobile) {
 				gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 				const smoother = ScrollSmoother.create({
 					wrapper: "#smooth-wrapper",
@@ -776,6 +778,24 @@ export default function Home() {
 				});
 			} else {
 				gsap.registerPlugin(ScrollTrigger);
+
+				// Fallback scroll handler for hash links when ScrollSmoother is disabled on mobile
+				document.querySelectorAll("a[href^='#']").forEach(link => {
+					link.addEventListener("click", (e) => {
+						const href = link.getAttribute("href");
+						if (href) {
+							e.preventDefault();
+							if (href === "#") {
+								window.scrollTo({ top: 0, behavior: "smooth" });
+							} else {
+								const targetElement = document.querySelector(href);
+								if (targetElement) {
+									targetElement.scrollIntoView({ behavior: "smooth" });
+								}
+							}
+						}
+					});
+				});
 			}
 
 			// Scroll-driven shrinking mask timeline centered on pinning Section 2
