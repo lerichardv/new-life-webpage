@@ -1148,6 +1148,23 @@ export default function Home() {
 				}
 			);
 
+			// Call to action Section
+			gsap.fromTo("#cta-orientacion .cta-reveal",
+				{ opacity: 0, y: 30 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.8,
+					ease: "power3.out",
+					stagger: 0.12,
+					scrollTrigger: {
+						trigger: "#cta-orientacion",
+						start: "top 75%",
+						toggleActions: "play none none none"
+					}
+				}
+			);
+
 			// 4. Contacto Section
 			gsap.fromTo("#contacto .contacto-reveal",
 				{ opacity: 0, y: 30 },
@@ -1272,7 +1289,9 @@ export default function Home() {
 				<div className="flex items-center gap-4">
 					{/* Desktop CTA Button */}
 					<a
-						href="#contacto"
+						href="https://wa.me/50498580298?text=Hola!%20Me%20interesa%20agendar%20una%20cita."
+						target="_blank"
+						rel="noopener noreferrer"
 						className={`hidden md:inline-block font-medium tracking-wide uppercase text-xs border rounded-full px-6 py-2.5 transition-all duration-300 shadow-sm hover:shadow-md ${navScrolled
 							? "border-[#054273] text-[#054273] hover:bg-[#054273] hover:text-[#D9D4CC]"
 							: "border-white/40 text-white hover:bg-white hover:text-[#054273]"
@@ -1280,6 +1299,7 @@ export default function Home() {
 					>
 						Agendar Cita
 					</a>
+
 
 					{/* Mobile Hamburger Button */}
 					<button
@@ -1350,7 +1370,9 @@ export default function Home() {
 				{/* Mobile Menu CTA at the bottom */}
 				<div className="z-10 w-full px-6 text-center">
 					<a
-						href="#contacto"
+						href="https://wa.me/50498580298?text=Hola!%20Me%20interesa%20agendar%20una%20cita."
+						target="_blank"
+						rel="noopener noreferrer"
 						onClick={() => setMobileMenuOpen(false)}
 						className="mobile-menu-item font-serif font-black tracking-widest uppercase text-xs bg-[#054273] text-[#D9D4CC] rounded-full px-8 py-3.5 hover:bg-[#05835d] hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl inline-block"
 					>
@@ -1415,7 +1437,9 @@ export default function Home() {
 									{/* Action Buttons */}
 									<div className="hero-a flex flex-wrap gap-4 items-center" style={{ opacity: 0 }}>
 										<a
-											href="#contacto"
+											href="https://wa.me/50498580298?text=Hola!%20Me%20interesa%20agendar%20una%20cita."
+											target="_blank"
+											rel="noopener noreferrer"
 											className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-white bg-black/45 backdrop-blur-md border border-white/10 hover:bg-[#05835d] hover:border-[#05835d] shadow-lg hover:shadow-xl transition-all duration-300"
 										>
 											Agendar cita
@@ -1562,9 +1586,13 @@ export default function Home() {
 								Sin químicos sintéticos ni soluciones artificiales. Sin efectos secundarios agresivos, respaldado por profesionales de la salud.
 							</p>
 
-							{/* AGENDAR CITA button */}
 							<div className="nosotros-cta mt-2" style={{ opacity: 0 }}>
-								<a href="#contacto" className="inline-block text-center text-xs font-bold uppercase tracking-widest text-white bg-[#054273] hover:bg-[#05835d] transition-colors duration-300 px-10 py-4 rounded-full shadow-md hover:shadow-lg">
+								<a
+									href="https://wa.me/50498580298?text=Hola!%20Me%20interesa%20agendar%20una%20cita."
+									target="_blank"
+									rel="noopener noreferrer"
+									className="inline-block text-center text-xs font-bold uppercase tracking-widest text-white bg-[#054273] hover:bg-[#05835d] transition-colors duration-300 px-10 py-4 rounded-full shadow-md hover:shadow-lg"
+								>
 									AGENDAR CITA
 								</a>
 							</div>
@@ -1896,7 +1924,9 @@ export default function Home() {
 										* Todos los exámenes y terapias se realizan en nuestras instalaciones.
 									</span>
 									<a
-										href="#contacto"
+										href={`https://wa.me/50498580298?text=${encodeURIComponent(`Hola! Me interesa agendar una cita para el plan de salud: ${activePlan.name} (${activePlan.subtitle}).`)}`}
+										target="_blank"
+										rel="noopener noreferrer"
 										onClick={() => setFormState(prev => ({ ...prev, plan: activePlan.id }))}
 										className="px-6 py-2.5 rounded-full bg-[#05835d] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#054273] transition-colors shadow-sm cursor-pointer"
 									>
@@ -1907,6 +1937,46 @@ export default function Home() {
 						</div>
 					</div>
 				</section>
+
+				{/* Section: Call to action */}
+				<section id="cta-orientacion" className="py-20 px-6 md:px-12 bg-[#054273] text-[#FAF7F0] relative overflow-hidden border-b border-[#FAF7F0]/10">
+					{/* Background decorative elements */}
+					<div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(193,170,88,0.15),transparent_50%)] z-0"></div>
+					<div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(5,131,93,0.12),transparent_50%)] z-0"></div>
+
+					<div className="max-w-6xl mx-auto text-center relative z-10 flex flex-col items-center">
+						{/* Decorative mark */}
+						<span className="cta-reveal text-[#c1aa58] text-2xl font-bold select-none mb-4" style={{ opacity: 0 }}>*</span>
+
+						{/* Tagline */}
+						<span className="cta-reveal text-[10px] font-bold tracking-[0.25em] text-[#c1aa58] uppercase font-mono mb-3 block" style={{ opacity: 0 }}>
+							¿No estás seguro de qué plan elegir?
+						</span>
+
+						{/* Title */}
+						<h2 className="cta-reveal text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-tight text-[#FAF7F0] font-serif leading-tight mb-6" style={{ opacity: 0 }}>
+							Te ayudamos a elegir el mejor tratamiento para ti
+						</h2>
+
+						{/* Description */}
+						<p className="cta-reveal text-sm sm:text-base text-[#D9D4CC]/90 leading-relaxed max-w-2xl mb-10 font-normal" style={{ opacity: 0 }}>
+							Cada cuerpo es diferente. Contáctanos hoy mismo y uno de nuestros asesores médicos te guiará personalmente para identificar el plan o terapia que mejor se adapte a tus necesidades y objetivos de salud.
+						</p>
+
+						{/* CTA Button */}
+						<div className="cta-reveal" style={{ opacity: 0 }}>
+							<a
+								href="https://wa.me/50498580298?text=Hola!%20No%20estoy%20seguro%20de%20qué%20servicio%20o%20plan%20elegir.%20Me%20gustaría%20recibir%20orientación%20para%20agendar%20mi%20cita."
+								target="_blank"
+								rel="noopener noreferrer"
+								className="inline-block text-center text-xs font-bold uppercase tracking-widest text-[#FAF7F0] bg-[#05835d] hover:bg-[#c1aa58] hover:text-[#054273] transition-all duration-300 px-10 py-4.5 rounded-full shadow-lg hover:shadow-2xl cursor-pointer"
+							>
+								Agendar cita
+							</a>
+						</div>
+					</div>
+				</section>
+
 
 				{/* Section: Contacto */}
 				<section id="contacto" className="py-24 px-6 md:px-12 bg-[#F3EFE3] relative">
