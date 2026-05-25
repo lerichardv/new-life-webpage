@@ -382,63 +382,52 @@ export default function Home() {
 
 		// Desktop animations (min-width: 1024px)
 		mm.add("(min-width: 1024px)", () => {
-			const isXl = window.matchMedia("(min-width: 1280px)").matches;
-			const targetWidth = isXl ? "50%" : "45%";
-			const targetLeft = isXl ? "50%" : "55%";
-
 			const tl = gsap.timeline({
 				defaults: {
-					ease: "power4.inOut",
+					ease: "power3.out",
 				}
 			});
 
+			// 1. Background image: cinematic Ken Burns scale-in
 			tl.fromTo(".hero-right-col",
-				{
-					position: "absolute",
-					left: 0,
-					top: 0,
-					bottom: 0,
-					height: "100%",
-					width: "100%",
-					zIndex: 0,
-					opacity: 1
-				},
-				{
-					left: targetLeft,
-					width: targetWidth,
-					duration: 1.8,
-					clearProps: "all"
-				}
+				{ opacity: 0, scale: 1.08 },
+				{ opacity: 1, scale: 1, duration: 2.2, ease: "power2.out" }
 			)
+				// 2. Molecular overlay fades in
 				.fromTo(".hero-left-col",
 					{ opacity: 0 },
-					{ opacity: 1, duration: 1.2, ease: "power3.out", clearProps: "opacity" },
-					"<"
+					{ opacity: 1, duration: 1.4, clearProps: "opacity" },
+					"-=1.6"
 				)
+				// 3. Navigation slides down
 				.fromTo(".hero-nav",
 					{ opacity: 0, y: -20 },
 					{ opacity: 1, y: 0, duration: 1.2, ease: "power3.out", clearProps: "all" },
-					"<+=0.3"
+					"-=1.2"
 				)
+				// 4. Headline sweeps in from below
 				.fromTo(".hero-h1",
-					{ opacity: 0, x: -60 },
-					{ opacity: 1, x: 0, duration: 1.6, ease: "power4.out" },
+					{ opacity: 0, y: 50 },
+					{ opacity: 1, y: 0, duration: 1.6, ease: "power4.out" },
 					"-=1.0"
 				)
+				// 5. Glassmorphism panel rises up
 				.fromTo(".hero-p",
-					{ opacity: 0, x: -40 },
-					{ opacity: 1, x: 0, duration: 1.6, ease: "power4.out" },
-					"-=1.2"
+					{ opacity: 0, y: 40 },
+					{ opacity: 1, y: 0, duration: 1.4, ease: "power4.out" },
+					"-=1.0"
 				)
+				// 6. CTA buttons
 				.fromTo(".hero-a",
-					{ opacity: 0, x: -30 },
-					{ opacity: 1, x: 0, duration: 1.4, ease: "power4.out" },
-					"-=1.2"
+					{ opacity: 0, y: 20 },
+					{ opacity: 1, y: 0, duration: 1.2, ease: "power3.out" },
+					"-=0.8"
 				)
+				// 7. Bottom cards slide up
 				.fromTo(".hero-card-desktop",
 					{ opacity: 0, y: 30 },
 					{ opacity: 1, y: 0, duration: 1.2, ease: "power3.out", stagger: 0.2 },
-					"-=1.0"
+					"-=0.8"
 				);
 		});
 
@@ -450,35 +439,42 @@ export default function Home() {
 				}
 			});
 
-			tl.fromTo(".hero-left-col",
-				{ opacity: 0 },
-				{ opacity: 1, duration: 1.2, clearProps: "opacity" }
+			// 1. Background image fades + scales in
+			tl.fromTo(".hero-right-col",
+				{ opacity: 0, scale: 1.05 },
+				{ opacity: 1, scale: 1, duration: 1.8, ease: "power2.out" }
 			)
+				// 2. Content overlay fades in
+				.fromTo(".hero-left-col",
+					{ opacity: 0 },
+					{ opacity: 1, duration: 1.2, clearProps: "opacity" },
+					"-=1.2"
+				)
+				// 3. Nav slides down
 				.fromTo(".hero-nav",
 					{ opacity: 0, y: -20 },
 					{ opacity: 1, y: 0, duration: 1.2, ease: "power3.out", clearProps: "all" },
-					"<+=0.3"
-				)
-				.fromTo(".hero-right-col",
-					{ opacity: 0, y: 40 },
-					{ opacity: 1, y: 0, duration: 1.4, clearProps: "all" },
 					"-=0.8"
 				)
+				// 4. Headline
 				.fromTo(".hero-h1",
-					{ opacity: 0, x: -30 },
-					{ opacity: 1, x: 0, duration: 1.4 },
+					{ opacity: 0, y: 30 },
+					{ opacity: 1, y: 0, duration: 1.4 },
 					"-=1.0"
 				)
+				// 5. Glass panel
 				.fromTo(".hero-p",
-					{ opacity: 0, x: -20 },
-					{ opacity: 1, x: 0, duration: 1.4 },
+					{ opacity: 0, y: 25 },
+					{ opacity: 1, y: 0, duration: 1.4 },
 					"-=1.0"
 				)
+				// 6. CTAs
 				.fromTo(".hero-a",
-					{ opacity: 0, x: -15 },
-					{ opacity: 1, x: 0, duration: 1.2 },
+					{ opacity: 0, y: 15 },
+					{ opacity: 1, y: 0, duration: 1.2 },
 					"-=1.0"
 				)
+				// 7. Mobile bottom cards
 				.fromTo(".hero-card-mobile",
 					{ opacity: 0, y: 30 },
 					{ opacity: 1, y: 0, duration: 1.2, ease: "power3.out", stagger: 0.2 },
@@ -797,49 +793,49 @@ export default function Home() {
 	return (
 		<div id="smooth-wrapper" ref={containerRef}>
 			{/* Navigation */}
-			<nav className="hero-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 md:px-12 md:py-4 text-sm bg-[#C4BFAF]/70 backdrop-blur-xs border-b border-[#054273]/5" style={{ opacity: 0 }}>
+			<nav className="hero-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 md:px-12 md:py-4 text-sm bg-[#0a1e30]/30 backdrop-blur-md border-b border-white/10" style={{ opacity: 0 }}>
 				<div className="flex items-center">
 					<Image
 						src="/images/new-life.svg"
 						alt="New Life Logo"
 						width={200}
 						height={60}
-						className="h-12 w-auto object-contain"
+						className="h-12 w-auto object-contain brightness-0 invert"
 						priority
 					/>
 				</div>
 				<div className="hidden md:flex gap-8 lg:gap-10 font-medium tracking-wide uppercase text-xs">
-					<a href="#" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+					<a href="#" className="hover:text-[#c1aa58] text-white/90 transition-colors flex items-center gap-2">
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Inicio
 					</a>
-					<a href="#nosotros" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+					<a href="#nosotros" className="hover:text-[#c1aa58] text-white/90 transition-colors flex items-center gap-2">
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Nosotros
 					</a>
-					<a href="#tratamientos" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+					<a href="#tratamientos" className="hover:text-[#c1aa58] text-white/90 transition-colors flex items-center gap-2">
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Tratamientos
 					</a>
-					<a href="#planes" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+					<a href="#planes" className="hover:text-[#c1aa58] text-white/90 transition-colors flex items-center gap-2">
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Planes de Salud
 					</a>
-					<a href="#contacto" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+					<a href="#contacto" className="hover:text-[#c1aa58] text-white/90 transition-colors flex items-center gap-2">
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Contacto
 					</a>
 				</div>
 				<div className="flex items-center gap-4">
 					{/* Desktop CTA Button */}
-					<a href="#contacto" className="hidden md:inline-block font-medium tracking-wide uppercase text-xs border border-[#054273] text-[#054273] rounded-full px-6 py-2.5 hover:bg-[#054273] hover:text-[#D9D4CC] transition-all duration-300 shadow-sm hover:shadow-md">
+					<a href="#contacto" className="hidden md:inline-block font-medium tracking-wide uppercase text-xs border border-white/40 text-white rounded-full px-6 py-2.5 hover:bg-white/15 hover:border-white/60 transition-all duration-300 shadow-sm hover:shadow-md">
 						Agendar Cita
 					</a>
 
 					{/* Mobile Hamburger Button */}
 					<button
 						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-						className="md:hidden w-12 h-12 rounded-full border border-[#054273] flex flex-col items-center justify-center gap-1 z-50 relative group focus:outline-none transition-colors duration-300"
+						className="md:hidden w-12 h-12 rounded-full border border-white/40 flex flex-col items-center justify-center gap-1 z-50 relative group focus:outline-none transition-colors duration-300"
 						aria-label="Toggle Menu"
 					>
-						<span className={`h-0.5 w-5 bg-[#054273] rounded-sm transition-all duration-300 ${mobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`}></span>
-						<span className={`h-0.5 w-5 bg-[#054273] rounded-sm transition-all duration-300 ${mobileMenuOpen ? "opacity-0 scale-0" : ""}`}></span>
-						<span className={`h-0.5 w-5 bg-[#054273] rounded-sm transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""}`}></span>
+						<span className={`h-0.5 w-5 bg-white rounded-sm transition-all duration-300 ${mobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`}></span>
+						<span className={`h-0.5 w-5 bg-white rounded-sm transition-all duration-300 ${mobileMenuOpen ? "opacity-0 scale-0" : ""}`}></span>
+						<span className={`h-0.5 w-5 bg-white rounded-sm transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""}`}></span>
 					</button>
 				</div>
 			</nav>
@@ -910,61 +906,148 @@ export default function Home() {
 				<div className="mask-section-2 relative w-full h-screen z-10 bg-[#054273] text-[#D9D4CC] overflow-hidden">
 					{/* Section 1: Hero (nested inside, absolute inset-0 on top of the parent) */}
 					<div className="mask-section-1 absolute inset-0 z-20 overflow-hidden bg-[#D9D4CC]" style={{ clipPath: "circle(100% at 50% 50%)", transformOrigin: "center center", willChange: "transform, clip-path, opacity" }}>
-						<main className="min-h-screen flex flex-col lg:flex-row relative">
-							{/* Left: Text Content Area */}
-							<div className="hero-left-col flex-1 flex flex-col justify-center px-6 md:px-12 pt-16 pb-12 lg:py-0 z-10 relative" style={{ opacity: 0 }}>
-								<div className="max-w-2xl">
-									<div className="mb-8 overflow-visible">
-										<h1 className="hero-h1 text-5xl sm:text-6xl lg:text-7xl xl:text-9xl leading-[0.8] font-bold tracking-tighter text-[#054273] leading-tight font-serif uppercase whitespace-normal pt-12 md:pt-0 lg:whitespace-nowrap select-none -ml-1.5" style={{ opacity: 0 }}>
-											REGENERA TU SALUD<span className="text-[#05835d]">.</span>
-										</h1>
-									</div>
-
-									<p className="hero-p text-lg md:text-xl text-[#1F384D] leading-relaxed mb-10 max-w-lg font-normal opacity-90" style={{ opacity: 0 }}>
-										No nos limitamos a tratar síntomas, abordamos el origen del problema. Un reset total de su metabolismo mediante medicina integrativa, celular y terapias alternativas.
-									</p>
-
-									<a href="#nosotros" className="hero-a group relative inline-flex items-center gap-4 text-sm font-medium uppercase tracking-widest text-[#054273] hover:text-[#05835d]" style={{ opacity: 0 }}>
-										<span className="w-12 h-12 rounded-full border border-[#054273] flex items-center justify-center group-hover:bg-[#05835d] group-hover:border-[#05835d] group-hover:text-white transition-all duration-300">
-											<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-												<path d="M5 12h14"></path>
-												<path d="m12 5 7 7-7 7"></path>
-											</svg>
-										</span>
-										Descubre el protocolo
-									</a>
-								</div>
-
-								{/* Bottom Grid Info inspired by Nervana cards */}
-								<div className="absolute bottom-0 left-0 w-full hidden lg:grid grid-cols-2">
-									<div className="hero-card-desktop p-8 border-t border-[#054273]/10 border-r border-[#054273]/10 relative group cursor-pointer hover:bg-[#E5E1D8]/40" style={{ opacity: 0 }}>
-										<div className="absolute top-8 right-8 text-[#c1aa58] text-2xl font-bold transition-transform duration-500 group-hover:rotate-90 select-none">*</div>
-										<h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4 text-[#05835d]">Medicina Ortomolecular</h3>
-										<p className="text-sm font-medium text-[#1F384D] leading-snug pr-8">
-											Limpieza profunda del "filtro interno", liberando la carga tóxica de órganos vitales.
-										</p>
-									</div>
-									<div className="hero-card-desktop p-8 relative border-t border-[#054273]/10 group cursor-pointer hover:bg-[#E5E1D8]/40" style={{ opacity: 0 }}>
-										<div className="absolute top-8 right-8 text-[#c1aa58] text-2xl font-bold transition-transform duration-500 group-hover:rotate-90 select-none">*</div>
-										<h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4 text-[#05835d]">Regeneración Celular</h3>
-										<p className="text-sm font-medium text-[#1F384D] leading-snug pr-8">
-											Sueroterapias y terapias complementarias para restaurar tu equilibrio biológico.
-										</p>
-									</div>
-								</div>
+						<main className="min-h-screen relative overflow-hidden">
+							{/* Full-bleed Hero Background Image */}
+							<div className="hero-right-col absolute inset-0 z-0" style={{ opacity: 0 }}>
+								<Image
+									src="/images/hero-image.jpg"
+									alt="Mujer en armonía con la naturaleza — New Life Center"
+									fill
+									className="object-cover object-[center_15%] lg:object-center"
+									priority
+									sizes="100vw"
+								/>
+								{/* Cinematic gradient overlays for text readability */}
+								<div className="absolute inset-0 bg-gradient-to-r from-[#0a1e30]/75 via-[#0a1e30]/40 to-transparent z-[1]" />
+								<div className="absolute inset-0 bg-gradient-to-t from-[#0a1e30]/60 via-transparent to-[#87CEEB]/15 z-[1]" />
+								<div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[#0a1e30]/50 to-transparent z-[1]" />
 							</div>
 
-							{/* Right: Image Area */}
-							<div className="hero-right-col lg:w-[45%] xl:w-[50%] min-h-[50vh] lg:min-h-screen relative overflow-hidden" style={{ opacity: 0 }}>
-								<div className="absolute inset-0 bg-black/5 z-10 mix-blend-overlay pointer-events-none" />
-								<Image
-									src="/images/hero-v2.jpg"
-									alt="New Life Center"
-									fill
-									className="object-cover object-right animate-pulse-slow"
-									priority
-									sizes="(max-width: 1024px) 100vw, 50vw"
-								/>
+							{/* Decorative molecular / neural-network SVG nodes */}
+							<div className="hero-left-col absolute inset-0 z-[2] pointer-events-none overflow-hidden" style={{ opacity: 0 }}>
+								<svg className="absolute right-0 top-1/4 w-[55%] h-[70%] opacity-[0.18] lg:opacity-[0.22]" viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+									{/* Connection lines */}
+									<line x1="420" y1="80" x2="520" y2="180" stroke="#05835d" strokeWidth="1" strokeOpacity="0.5" />
+									<line x1="520" y1="180" x2="480" y2="310" stroke="#05835d" strokeWidth="1" strokeOpacity="0.4" />
+									<line x1="480" y1="310" x2="350" y2="380" stroke="#05835d" strokeWidth="1" strokeOpacity="0.35" />
+									<line x1="350" y1="380" x2="280" y2="260" stroke="#05835d" strokeWidth="1" strokeOpacity="0.3" />
+									<line x1="280" y1="260" x2="420" y2="80" stroke="#05835d" strokeWidth="1" strokeOpacity="0.25" />
+									<line x1="520" y1="180" x2="580" y2="300" stroke="#05835d" strokeWidth="0.8" strokeOpacity="0.3" />
+									<line x1="350" y1="380" x2="420" y2="460" stroke="#05835d" strokeWidth="0.8" strokeOpacity="0.25" />
+									<line x1="280" y1="260" x2="180" y2="200" stroke="#05835d" strokeWidth="0.8" strokeOpacity="0.2" />
+									<line x1="180" y1="200" x2="220" y2="100" stroke="#05835d" strokeWidth="0.8" strokeOpacity="0.2" />
+									<line x1="480" y1="310" x2="560" y2="400" stroke="#05835d" strokeWidth="0.6" strokeOpacity="0.2" />
+									{/* Glowing nodes */}
+									<circle cx="420" cy="80" r="8" fill="#05835d" fillOpacity="0.6">
+										<animate attributeName="r" values="8;11;8" dur="3s" repeatCount="indefinite" />
+										<animate attributeName="fillOpacity" values="0.6;0.9;0.6" dur="3s" repeatCount="indefinite" />
+									</circle>
+									<circle cx="420" cy="80" r="18" fill="none" stroke="#05835d" strokeWidth="0.5" strokeOpacity="0.25">
+										<animate attributeName="r" values="18;24;18" dur="3s" repeatCount="indefinite" />
+									</circle>
+									<circle cx="520" cy="180" r="10" fill="#c1aa58" fillOpacity="0.5">
+										<animate attributeName="r" values="10;14;10" dur="4s" repeatCount="indefinite" />
+										<animate attributeName="fillOpacity" values="0.5;0.8;0.5" dur="4s" repeatCount="indefinite" />
+									</circle>
+									<circle cx="520" cy="180" r="22" fill="none" stroke="#c1aa58" strokeWidth="0.5" strokeOpacity="0.2">
+										<animate attributeName="r" values="22;28;22" dur="4s" repeatCount="indefinite" />
+									</circle>
+									<circle cx="480" cy="310" r="7" fill="#05835d" fillOpacity="0.45">
+										<animate attributeName="r" values="7;10;7" dur="3.5s" repeatCount="indefinite" />
+									</circle>
+									<circle cx="350" cy="380" r="6" fill="#c1aa58" fillOpacity="0.4">
+										<animate attributeName="r" values="6;9;6" dur="2.8s" repeatCount="indefinite" />
+									</circle>
+									<circle cx="280" cy="260" r="5" fill="#05835d" fillOpacity="0.35">
+										<animate attributeName="r" values="5;7;5" dur="3.2s" repeatCount="indefinite" />
+									</circle>
+									<circle cx="580" cy="300" r="4" fill="#c1aa58" fillOpacity="0.3" />
+									<circle cx="420" cy="460" r="5" fill="#05835d" fillOpacity="0.25" />
+									<circle cx="180" cy="200" r="4" fill="#c1aa58" fillOpacity="0.2" />
+									<circle cx="220" cy="100" r="3" fill="#05835d" fillOpacity="0.2" />
+									<circle cx="560" cy="400" r="3.5" fill="#c1aa58" fillOpacity="0.15" />
+									{/* Subtle floating particles */}
+									<circle cx="460" cy="140" r="2" fill="#ffffff" fillOpacity="0.15">
+										<animate attributeName="cy" values="140;130;140" dur="5s" repeatCount="indefinite" />
+									</circle>
+									<circle cx="380" cy="320" r="1.5" fill="#ffffff" fillOpacity="0.12">
+										<animate attributeName="cy" values="320;310;320" dur="4s" repeatCount="indefinite" />
+									</circle>
+									<circle cx="540" cy="240" r="1.5" fill="#ffffff" fillOpacity="0.1">
+										<animate attributeName="cx" values="540;550;540" dur="6s" repeatCount="indefinite" />
+									</circle>
+								</svg>
+							</div>
+
+							{/* Content Overlay Layer */}
+							<div className="hero-left-col relative z-10 min-h-screen flex flex-col justify-between pt-24 md:pt-28 pb-0 lg:pb-0" style={{ opacity: 0 }}>
+								{/* Large Cinematic Headline */}
+								<div className="px-6 md:px-12 lg:px-16 xl:px-20">
+									<h1 className="hero-h1 text-[2.75rem] sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] 2xl:text-[7.5rem] font-bold tracking-[-0.03em] text-white font-serif uppercase select-none leading-[0.9] max-w-[900px]" style={{ opacity: 0 }}>
+										<span className="block">ES MOMENTO</span>
+										<span className="block text-right lg:text-left lg:pl-[10%]">DE OPTIMIZAR</span>
+										<span className="block text-right lg:text-right">TU VIDA<span className="text-[#c1aa58]">.</span></span>
+									</h1>
+								</div>
+
+								{/* Bottom Area: Glassmorphism Info Panel + Desktop Info Cards */}
+								<div className="mt-auto">
+									{/* Glassmorphism Info Panel */}
+									<div className="px-6 md:px-12 lg:px-16 xl:px-20 pb-8 lg:pb-12">
+										<div className="hero-p relative max-w-xl" style={{ opacity: 0 }}>
+											{/* Glass card */}
+											<div className="relative backdrop-blur-md bg-white/10 border border-white/15 rounded-2xl p-6 md:p-8 shadow-2xl overflow-hidden">
+												{/* Inner glow */}
+												<div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl pointer-events-none" />
+
+												<div className="relative z-10">
+													<h2 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-[#c1aa58] mb-3 flex items-center gap-2">
+														<span className="w-6 h-[1px] bg-[#c1aa58]" />
+														Mejora tu salud desde la molécula
+													</h2>
+													<p className="text-sm sm:text-base text-white/85 leading-relaxed mb-6 font-light">
+														Medicina funcional, regenerativa y terapias avanzadas para tratar enfermedades crónicas, neurológicas y metabólicas desde la causa raíz.
+													</p>
+													<div className="hero-a flex flex-wrap gap-3" style={{ opacity: 0 }}>
+														<a
+															href="#contacto"
+															className="group inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 hover:border-white/35 text-white text-xs font-semibold uppercase tracking-[0.15em] rounded-full px-6 py-3 transition-all duration-300 backdrop-blur-sm"
+														>
+															Agendar Cita
+															<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-0.5">
+																<path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+															</svg>
+														</a>
+														<a
+															href="#tratamientos"
+															className="inline-flex items-center gap-2 text-white/70 hover:text-white text-xs font-semibold uppercase tracking-[0.15em] rounded-full px-6 py-3 border border-white/10 hover:border-white/25 transition-all duration-300"
+														>
+															Enfermedades que tratamos
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									{/* Desktop Bottom Grid Info Cards */}
+									<div className="hidden lg:grid grid-cols-2 border-t border-white/10">
+										<div className="hero-card-desktop p-8 border-r border-white/10 relative group cursor-pointer transition-colors duration-300 hover:bg-white/5" style={{ opacity: 0 }}>
+											<div className="absolute top-8 right-8 text-[#c1aa58] text-2xl font-bold transition-transform duration-500 group-hover:rotate-90 select-none">*</div>
+											<h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4 text-[#05835d]">Medicina Ortomolecular</h3>
+											<p className="text-sm font-medium text-white/70 leading-snug pr-8 group-hover:text-white/90 transition-colors duration-300">
+												Limpieza profunda del &quot;filtro interno&quot;, liberando la carga tóxica de órganos vitales.
+											</p>
+										</div>
+										<div className="hero-card-desktop p-8 relative group cursor-pointer transition-colors duration-300 hover:bg-white/5" style={{ opacity: 0 }}>
+											<div className="absolute top-8 right-8 text-[#c1aa58] text-2xl font-bold transition-transform duration-500 group-hover:rotate-90 select-none">*</div>
+											<h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4 text-[#05835d]">Regeneración Celular</h3>
+											<p className="text-sm font-medium text-white/70 leading-snug pr-8 group-hover:text-white/90 transition-colors duration-300">
+												Sueroterapias y terapias complementarias para restaurar tu equilibrio biológico.
+											</p>
+										</div>
+									</div>
+								</div>
 							</div>
 						</main>
 
@@ -974,7 +1057,7 @@ export default function Home() {
 								<div className="absolute top-6 right-6 text-[#c1aa58] text-xl font-bold select-none">*</div>
 								<h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-3 text-[#05835d]">Medicina Ortomolecular</h3>
 								<p className="text-sm font-medium text-[#1F384D] leading-snug pb-12">
-									Limpieza profunda del "filtro interno", liberando la carga tóxica de órganos vitales.
+									Limpieza profunda del &quot;filtro interno&quot;, liberando la carga tóxica de órganos vitales.
 								</p>
 							</div>
 							<div className="hero-card-mobile p-6 relative group bg-[#E5E1D8]/20" style={{ opacity: 0 }}>
