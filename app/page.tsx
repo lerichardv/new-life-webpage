@@ -241,9 +241,26 @@ export default function Home() {
 	const [formState, setFormState] = useState({ name: "", phone: "", email: "", plan: "diabetcare", message: "" });
 	const [submitted, setSubmitted] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const [navScrolled, setNavScrolled] = useState(false);
+
+	// Scroll listener to toggle navbar transparency
+	useEffect(() => {
+		const handleScroll = () => {
+			if (window.scrollY > 300) {
+				setNavScrolled(true);
+			} else {
+				setNavScrolled(false);
+			}
+		};
+		handleScroll();
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, []);
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const mobileMenuRef = useRef<HTMLDivElement>(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const canvasNosotrosRef = useRef<HTMLCanvasElement>(null);
 
 	// GSAP Fullscreen Mobile Menu Animation Effect
 	useEffect(() => {
@@ -286,6 +303,437 @@ export default function Home() {
 			});
 		}
 	}, [mobileMenuOpen]);
+
+	// Particle system for glowing cell-like particles
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return;
+
+		let animationFrameId: number;
+		let particles: Array<{
+			x: number;
+			y: number;
+			size: number;
+			speedX: number;
+			speedY: number;
+			opacity: number;
+			color: string;
+			pulseSpeed: number;
+			pulseDir: number;
+			update: () => void;
+			draw: () => void;
+		}> = [];
+		const particleCount = 20;
+
+		// Mouse coordinates relative to canvas
+		const mouse = { x: null as number | null, y: null as number | null, radius: 120 };
+
+		const handleMouseMove = (e: MouseEvent) => {
+			const rect = canvas.getBoundingClientRect();
+			mouse.x = e.clientX - rect.left;
+			mouse.y = e.clientY - rect.top;
+		};
+
+		const handleMouseLeave = () => {
+			mouse.x = null;
+			mouse.y = null;
+		};
+
+		window.addEventListener("mousemove", handleMouseMove);
+		canvas.addEventListener("mouseleave", handleMouseLeave);
+
+		class CellParticle {
+			x: number;
+			y: number;
+			size: number;
+			speedX: number;
+			speedY: number;
+			opacity: number;
+			color: string;
+			pulseSpeed: number;
+			pulseDir: number;
+
+			constructor() {
+				// 80% chance to spawn on the right half (from 45% width to 100%), 20% on the left half (0% to 45%)
+				if (Math.random() < 0.8) {
+					this.x = (Math.random() * 0.55 + 0.45) * canvas!.width;
+				} else {
+					this.x = Math.random() * 0.45 * canvas!.width;
+				}
+				this.y = Math.random() * canvas!.height;
+				this.size = Math.random() * 32 + 8; // size 8px to 40px
+				this.speedX = (Math.random() - 0.5) * 0.3; // slow drift
+				this.speedY = (Math.random() - 0.5) * 0.3;
+				this.opacity = Math.random() * 0.25 + 0.55; // higher baseline opacity (0.55 to 0.8)
+				// Luminous cyan/teal colors matching the user's screenshot
+				const colors = [
+					"rgba(89, 132, 194, ",   // Base Blue (#5984C2)
+					"rgba(122, 158, 209, ",  // Slate Blue (#7A9ED1)
+					"rgba(155, 185, 224, ",  // Soft Baby Blue (#9BB9E0)
+					"rgba(189, 211, 240, ",  // Powder Blue (#BDD3F0)
+					"rgba(222, 238, 255, ",  // Ice Blue (#DEEEFF)
+					"rgba(89, 194, 178, ",   // Mint Teal (#59C2B2)
+					"rgba(255, 255, 255, "   // Pure White (#FFFFFF)
+				];
+				this.color = colors[Math.floor(Math.random() * colors.length)];
+				this.pulseSpeed = Math.random() * 0.01 + 0.003;
+				this.pulseDir = Math.random() > 0.5 ? 1 : -1;
+			}
+
+			update() {
+				// Drift
+				this.x += this.speedX;
+				this.y += this.speedY;
+
+				// Boundary recycling (keeping the 80/20 right-skewed distribution)
+				if (this.x > canvas!.width || this.x < 0 || this.y > canvas!.height || this.y < 0) {
+					if (Math.random() < 0.8) {
+						this.x = (Math.random() * 0.55 + 0.45) * canvas!.width;
+					} else {
+						this.x = Math.random() * 0.45 * canvas!.width;
+					}
+					this.y = Math.random() * canvas!.height;
+					this.speedX = (Math.random() - 0.5) * 0.3;
+					this.speedY = (Math.random() - 0.5) * 0.3;
+				}
+
+				// Pulse opacity gently
+				this.opacity += this.pulseSpeed * this.pulseDir;
+				if (this.opacity > 0.85 || this.opacity < 0.45) {
+					this.pulseDir *= -1;
+				}
+
+				// Interaction with mouse cursor
+				if (mouse.x !== null && mouse.y !== null) {
+					const dx = this.x - mouse.x;
+					const dy = this.y - mouse.y;
+					const distance = Math.sqrt(dx * dx + dy * dy);
+					if (distance < mouse.radius) {
+						const force = (mouse.radius - distance) / mouse.radius;
+						const angle = Math.atan2(dy, dx);
+						// Gently push particles away
+						this.x += Math.cos(angle) * force * 1.5;
+						this.y += Math.sin(angle) * force * 1.5;
+					}
+				}
+			}
+
+			draw() {
+				if (!ctx) return;
+
+				ctx.beginPath();
+				ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+
+				// Create a radial gradient with late falloff for sharper, solid-looking edges
+				const gradient = ctx.createRadialGradient(
+					this.x, this.y, 0,
+					this.x, this.y, this.size
+				);
+				gradient.addColorStop(0, `${this.color}${this.opacity})`);
+				gradient.addColorStop(0.7, `${this.color}${this.opacity * 0.95})`);
+				gradient.addColorStop(0.9, `${this.color}${this.opacity * 0.4})`);
+				gradient.addColorStop(1, `${this.color}0)`);
+
+				ctx.fillStyle = gradient;
+				ctx.shadowColor = "rgba(45, 212, 191, 0.35)";
+				ctx.shadowBlur = 6;
+				ctx.fill();
+			}
+		}
+
+		const resizeCanvas = () => {
+			canvas!.width = window.innerWidth;
+			canvas!.height = window.innerHeight;
+			initParticles();
+		};
+
+		const initParticles = () => {
+			particles = [];
+			for (let i = 0; i < particleCount; i++) {
+				particles.push(new CellParticle());
+			}
+		};
+
+		window.addEventListener("resize", resizeCanvas);
+		resizeCanvas();
+
+		const animate = () => {
+			ctx.clearRect(0, 0, canvas!.width, canvas!.height);
+
+			// Draw subtle connections between close-by particles to make them look like cell structures/molecules
+			for (let i = 0; i < particles.length; i++) {
+				for (let j = i + 1; j < particles.length; j++) {
+					const dx = particles[i].x - particles[j].x;
+					const dy = particles[i].y - particles[j].y;
+					const distance = Math.sqrt(dx * dx + dy * dy);
+
+					if (distance < 190) {
+						ctx.beginPath();
+						ctx.moveTo(particles[i].x, particles[i].y);
+						ctx.lineTo(particles[j].x, particles[j].y);
+						const lineOpacity = (1 - distance / 190) * 0.36;
+						ctx.strokeStyle = `rgba(155, 185, 224, ${lineOpacity})`; // Soft blue connection lines matching particle shades (#9BB9E0)
+						ctx.lineWidth = 1.3;
+						ctx.stroke();
+					}
+				}
+			}
+
+			particles.forEach(p => {
+				p.update();
+				p.draw();
+			});
+
+			animationFrameId = requestAnimationFrame(animate);
+		};
+
+		animate();
+
+		return () => {
+			window.removeEventListener("resize", resizeCanvas);
+			window.removeEventListener("mousemove", handleMouseMove);
+			canvas.removeEventListener("mouseleave", handleMouseLeave);
+			cancelAnimationFrame(animationFrameId);
+		};
+	}, []);
+
+	// DNA and Cellular Membrane Animation Loop for Nosotros Section
+	useEffect(() => {
+		const canvas = canvasNosotrosRef.current;
+		if (!canvas) return;
+
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return;
+
+		let animationFrameId: number;
+		let rotationPhase = 0;
+
+		// Floating molecules parameters
+		const floatingMolecules = [
+			{ xA: 28, yA: 36, xB: 33, yB: 28, rA: 1.5, rB: 1.0, speed: 0.015, angle: Math.random() * Math.PI },
+			{ xA: 72, yA: 34, xB: 66, yB: 28, rA: 1.0, rB: 1.8, speed: 0.012, angle: Math.random() * Math.PI },
+			{ xA: 68, yA: 68, xB: 74, yB: 62, rA: 1.5, rB: 1.0, speed: 0.018, angle: Math.random() * Math.PI }
+		];
+
+		const resizeCanvas = () => {
+			const parent = canvas!.parentElement;
+			if (!parent) return;
+			// Use clientWidth to obtain accurate inner width (excluding border shifts)
+			const size = Math.round(parent.clientWidth);
+			const dpr = window.devicePixelRatio || 1;
+			canvas!.width = size * dpr;
+			canvas!.height = size * dpr;
+			ctx!.scale(dpr, dpr);
+			canvas!.style.width = `${size}px`;
+			canvas!.style.height = `${size}px`;
+		};
+
+		window.addEventListener("resize", resizeCanvas);
+		resizeCanvas();
+
+		const drawBlueprint = (width: number) => {
+			if (!ctx) return;
+			const c = width / 2;
+
+			ctx.clearRect(0, 0, width, width);
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.15)";
+			ctx.lineWidth = 0.5;
+
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.46, 0, Math.PI * 2);
+			ctx.stroke();
+
+			ctx.save();
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.3)";
+			ctx.setLineDash([3, 3]);
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.40, 0, Math.PI * 2);
+			ctx.stroke();
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.2)";
+			ctx.setLineDash([1, 5]);
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.30, 0, Math.PI * 2);
+			ctx.stroke();
+			ctx.restore();
+
+			ctx.save();
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.25)";
+			ctx.setLineDash([2, 4]);
+
+			ctx.beginPath();
+			ctx.moveTo(c, width * 0.04);
+			ctx.lineTo(c, width * 0.96);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(width * 0.04, c);
+			ctx.lineTo(width * 0.96, c);
+			ctx.stroke();
+			ctx.restore();
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.08)";
+			ctx.beginPath();
+			ctx.moveTo(width * 0.18, width * 0.18);
+			ctx.lineTo(width * 0.82, width * 0.82);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(width * 0.18, width * 0.82);
+			ctx.lineTo(width * 0.82, width * 0.18);
+			ctx.stroke();
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.4)";
+			ctx.lineWidth = 0.8;
+			ctx.save();
+			ctx.setLineDash([12, 4]);
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.24, 0, Math.PI * 2);
+			ctx.stroke();
+			ctx.restore();
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.15)";
+			ctx.lineWidth = 0.4;
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.23, 0, Math.PI * 2);
+			ctx.stroke();
+		};
+
+		const animate = () => {
+			const size = canvas.width / (window.devicePixelRatio || 1);
+			drawBlueprint(size);
+
+			ctx.fillStyle = "rgba(5, 131, 93, 0.35)";
+			ctx.strokeStyle = "rgba(5, 131, 93, 0.35)";
+			ctx.lineWidth = 0.5;
+
+			floatingMolecules.forEach(mol => {
+				mol.angle += mol.speed;
+				const driftX = Math.sin(mol.angle) * 1.5;
+				const driftY = Math.cos(mol.angle) * 1.5;
+
+				const xA = (mol.xA + driftX) * (size / 100);
+				const yA = (mol.yA + driftY) * (size / 100);
+				const xB = (mol.xB + driftX) * (size / 100);
+				const yB = (mol.yB + driftY) * (size / 100);
+
+				ctx.beginPath();
+				ctx.moveTo(xA, yA);
+				ctx.lineTo(xB, yB);
+				ctx.stroke();
+
+				ctx.beginPath();
+				ctx.arc(xA, yA, mol.rA, 0, Math.PI * 2);
+				ctx.fill();
+
+				ctx.beginPath();
+				ctx.arc(xB, yB, mol.rB, 0, Math.PI * 2);
+				ctx.fill();
+			});
+
+			rotationPhase += 0.015;
+			const nodeCount = 14;
+			const dnaPoints: Array<{ xA: number; y: number; zA: number; xB: number; zB: number }> = [];
+
+			const frequency = (3 * Math.PI) / (nodeCount - 1);
+			for (let i = 0; i < nodeCount; i++) {
+				const yPercent = 15 + i * (70 / (nodeCount - 1));
+				const y = yPercent * (size / 100);
+				const angle = i * frequency + rotationPhase;
+
+				const sinVal = Math.sin(angle);
+				const cosVal = Math.cos(angle);
+
+				const xA = (50 + 13 * sinVal) * (size / 100);
+				const xB = (50 - 13 * sinVal) * (size / 100);
+
+				dnaPoints.push({ xA, y, zA: cosVal, xB, zB: -cosVal });
+			}
+
+			dnaPoints.forEach((pt, idx) => {
+				ctx.strokeStyle = `rgba(5, 66, 115, ${0.35 + pt.zA * 0.2})`;
+				ctx.lineWidth = 0.8;
+				ctx.beginPath();
+				ctx.moveTo(pt.xA, pt.y);
+				ctx.lineTo(pt.xB, pt.y);
+				ctx.stroke();
+			});
+
+			ctx.beginPath();
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.45)";
+			ctx.lineWidth = 1.2;
+			ctx.moveTo(dnaPoints[0].xA, dnaPoints[0].y);
+			for (let i = 1; i < dnaPoints.length; i++) {
+				const xc = (dnaPoints[i - 1].xA + dnaPoints[i].xA) / 2;
+				const yc = (dnaPoints[i - 1].y + dnaPoints[i].y) / 2;
+				ctx.quadraticCurveTo(dnaPoints[i - 1].xA, dnaPoints[i - 1].y, xc, yc);
+			}
+			ctx.lineTo(dnaPoints[dnaPoints.length - 1].xA, dnaPoints[dnaPoints.length - 1].y);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.strokeStyle = "rgba(74, 66, 56, 0.6)";
+			ctx.lineWidth = 1.2;
+			ctx.moveTo(dnaPoints[0].xB, dnaPoints[0].y);
+			for (let i = 1; i < dnaPoints.length; i++) {
+				const xc = (dnaPoints[i - 1].xB + dnaPoints[i].xB) / 2;
+				const yc = (dnaPoints[i - 1].y + dnaPoints[i].y) / 2;
+				ctx.quadraticCurveTo(dnaPoints[i - 1].xB, dnaPoints[i - 1].y, xc, yc);
+			}
+			ctx.lineTo(dnaPoints[dnaPoints.length - 1].xB, dnaPoints[dnaPoints.length - 1].y);
+			ctx.stroke();
+
+			dnaPoints.forEach((pt, idx) => {
+				const sizeFactorA = pt.zA * 0.35 + 1.0;
+				const sizeFactorB = pt.zB * 0.35 + 1.0;
+
+				const rA = sizeFactorA * 2.2;
+				const rB = sizeFactorB * 2.2;
+
+				const opacityA = pt.zA * 0.3 + 0.65;
+				const opacityB = pt.zB * 0.3 + 0.65;
+
+				const isGreenA = idx % 3 === 0;
+				const isGreenB = idx % 3 === 2;
+
+				ctx.fillStyle = isGreenA
+					? `rgba(5, 131, 93, ${opacityA})`
+					: `rgba(5, 66, 115, ${opacityA})`;
+				ctx.beginPath();
+				ctx.arc(pt.xA, pt.y, rA, 0, Math.PI * 2);
+				ctx.fill();
+
+				ctx.fillStyle = isGreenB
+					? `rgba(5, 131, 93, ${opacityB})`
+					: `rgba(5, 66, 115, ${opacityB})`;
+				ctx.beginPath();
+				ctx.arc(pt.xB, pt.y, rB, 0, Math.PI * 2);
+				ctx.fill();
+
+				if (Math.abs(pt.xA - pt.xB) < 2.5) {
+					ctx.fillStyle = `rgba(5, 66, 115, 0.8)`;
+					ctx.beginPath();
+					ctx.arc((pt.xA + pt.xB) / 2, pt.y, 2.2, 0, Math.PI * 2);
+					ctx.fill();
+				}
+			});
+
+			animationFrameId = requestAnimationFrame(animate);
+		};
+
+		animate();
+
+		return () => {
+			window.removeEventListener("resize", resizeCanvas);
+			cancelAnimationFrame(animationFrameId);
+		};
+	}, []);
+
+
 
 	useGSAP(() => {
 		if (!containerRef.current) return;
@@ -376,16 +824,35 @@ export default function Home() {
 					duration: 2.5,
 					ease: "power1.inOut"
 				});
+
+			// Subtle parallax movement of Section 2 background image (spans the entire 8.0 scroll timeline duration)
+			maskTl.fromTo(".section2-bg-image",
+				{ yPercent: 10 },
+				{ yPercent: -10, ease: "none", duration: 8.0 },
+				0
+			);
+
+
 		}
+
+		// Target the image and animate its Y position on scroll
+		gsap.to(".section4-bg-image", {
+			yPercent: 30, // Moves the image down by 30% relative to its height as you scroll
+			ease: "none", // Must be "none" to keep the movement linear with the scrollbar
+			scrollTrigger: {
+				trigger: ".section4-bg-image",
+				start: "top bottom", // Start when the top of the section hits the bottom of the viewport
+				end: "bottom top", // End when the bottom of the section leaves the viewport
+				scrub: true, // Ties the animation exactly to the scrollbar
+				invalidateOnRefresh: true // Ensures responsiveness on window resize
+			}
+		});
+
 
 		const mm = gsap.matchMedia();
 
 		// Desktop animations (min-width: 1024px)
 		mm.add("(min-width: 1024px)", () => {
-			const isXl = window.matchMedia("(min-width: 1280px)").matches;
-			const targetWidth = isXl ? "50%" : "45%";
-			const targetLeft = isXl ? "50%" : "55%";
-
 			const tl = gsap.timeline({
 				defaults: {
 					ease: "power4.inOut",
@@ -394,19 +861,14 @@ export default function Home() {
 
 			tl.fromTo(".hero-right-col",
 				{
-					position: "absolute",
-					left: 0,
-					top: 0,
-					bottom: 0,
-					height: "100%",
-					width: "100%",
-					zIndex: 0,
-					opacity: 1
+					scale: 1.05,
+					opacity: 0
 				},
 				{
-					left: targetLeft,
-					width: targetWidth,
-					duration: 1.8,
+					scale: 1,
+					opacity: 1,
+					duration: 2.0,
+					ease: "power2.out",
 					clearProps: "all"
 				}
 			)
@@ -460,8 +922,8 @@ export default function Home() {
 					"<+=0.3"
 				)
 				.fromTo(".hero-right-col",
-					{ opacity: 0, y: 40 },
-					{ opacity: 1, y: 0, duration: 1.4, clearProps: "all" },
+					{ opacity: 0, scale: 1.05 },
+					{ opacity: 1, scale: 1, duration: 1.6, ease: "power2.out", clearProps: "all" },
 					"-=0.8"
 				)
 				.fromTo(".hero-h1",
@@ -496,7 +958,7 @@ export default function Home() {
 					y: 0,
 					duration: 0.8,
 					ease: "power3.out",
-					stagger: 0.12,
+					stagger: 0.15,
 					scrollTrigger: {
 						trigger: "#nosotros",
 						start: "top 75%",
@@ -505,59 +967,13 @@ export default function Home() {
 				}
 			);
 
-			gsap.fromTo("#nosotros .nosotros-left-img",
-				{ opacity: 0, scale: 0.96 },
-				{
-					opacity: 1,
-					scale: 1,
-					duration: 1.2,
-					ease: "power2.out",
-					scrollTrigger: {
-						trigger: "#nosotros",
-						start: "top 70%",
-						toggleActions: "play none none none"
-					}
-				}
-			);
-
-			gsap.fromTo("#nosotros .nosotros-arrow",
-				{ opacity: 0, x: -25 },
-				{
-					opacity: 1,
-					x: 0,
-					duration: 0.8,
-					ease: "power2.out",
-					scrollTrigger: {
-						trigger: "#nosotros .nosotros-arrow",
-						start: "top 85%",
-						toggleActions: "play none none none"
-					}
-				}
-			);
-
-			gsap.fromTo("#nosotros .nosotros-list",
+			gsap.fromTo("#nosotros .nosotros-cta",
 				{ opacity: 0, y: 20 },
 				{
 					opacity: 1,
 					y: 0,
 					duration: 0.8,
 					ease: "power2.out",
-					scrollTrigger: {
-						trigger: "#nosotros .nosotros-list",
-						start: "top 85%",
-						toggleActions: "play none none none"
-					}
-				}
-			);
-
-			gsap.fromTo("#nosotros .nosotros-cta",
-				{ opacity: 0, y: 25, scale: 0.95 },
-				{
-					opacity: 1,
-					y: 0,
-					scale: 1,
-					duration: 0.8,
-					ease: "back.out(1.5)",
 					scrollTrigger: {
 						trigger: "#nosotros .nosotros-cta",
 						start: "top 85%",
@@ -566,51 +982,16 @@ export default function Home() {
 				}
 			);
 
-			// Vision, Mision, and Values
-			gsap.fromTo("#nosotros .nosotros-card",
-				{ opacity: 0, y: 40, scale: 0.98 },
-				{
-					opacity: 1,
-					y: 0,
-					scale: 1,
-					duration: 0.8,
-					ease: "power3.out",
-					stagger: 0.2,
-					scrollTrigger: {
-						trigger: "#nosotros .nosotros-card",
-						start: "top 80%",
-						toggleActions: "play none none none"
-					}
-				}
-			);
-
-			gsap.fromTo("#nosotros .valores-title",
-				{ opacity: 0, y: 20 },
-				{
-					opacity: 1,
-					y: 0,
-					duration: 0.8,
-					ease: "power2.out",
-					scrollTrigger: {
-						trigger: "#nosotros .valores-title",
-						start: "top 85%",
-						toggleActions: "play none none none"
-					}
-				}
-			);
-
-			gsap.fromTo("#nosotros .valor-tag",
-				{ opacity: 0, scale: 0.85, y: 15 },
+			gsap.fromTo("#nosotros .nosotros-particles-container",
+				{ opacity: 0, scale: 0.95 },
 				{
 					opacity: 1,
 					scale: 1,
-					y: 0,
-					duration: 0.5,
+					duration: 1.0,
 					ease: "power2.out",
-					stagger: 0.05,
 					scrollTrigger: {
-						trigger: "#nosotros .valores-title",
-						start: "top 80%",
+						trigger: "#nosotros",
+						start: "top 70%",
 						toggleActions: "play none none none"
 					}
 				}
@@ -660,6 +1041,61 @@ export default function Home() {
 					scrollTrigger: {
 						trigger: "#tratamientos .terapia-banner",
 						start: "top 80%",
+						toggleActions: "play none none none"
+					}
+				}
+			);
+
+			// 3. Enfermedades Section (Pin & Stagger Curtain reveal)
+			gsap.fromTo("#enfermedades .enfermedades-reveal",
+				{ opacity: 0, y: 30 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.8,
+					ease: "power2.out",
+					scrollTrigger: {
+						trigger: "#enfermedades",
+						start: "top 95%",
+						toggleActions: "play none none none"
+					}
+				}
+			);
+
+			const enfermedadesTl = gsap.timeline({
+				scrollTrigger: {
+					trigger: "#enfermedades",
+					start: "top top",
+					end: "+=120%",
+					pin: true,
+					pinSpacing: true,
+					scrub: 1.2,
+					invalidateOnRefresh: true,
+				}
+			});
+
+			enfermedadesTl.fromTo("#enfermedades .enfermedades-card",
+				{ opacity: 0, yPercent: 120 },
+				{
+					opacity: 1,
+					yPercent: 0,
+					duration: 2.0,
+					stagger: 0.6,
+					ease: "power3.out"
+				}
+			);
+
+			gsap.fromTo("#enfermedades-list .list-card",
+				{ opacity: 0, y: 50 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 1.0,
+					ease: "power3.out",
+					stagger: 0.18,
+					scrollTrigger: {
+						trigger: "#enfermedades-list",
+						start: "top 75%",
 						toggleActions: "play none none none"
 					}
 				}
@@ -797,49 +1233,67 @@ export default function Home() {
 	return (
 		<div id="smooth-wrapper" ref={containerRef}>
 			{/* Navigation */}
-			<nav className="hero-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 md:px-12 md:py-4 text-sm bg-[#C4BFAF]/70 backdrop-blur-xs border-b border-[#054273]/5" style={{ opacity: 0 }}>
+			<nav
+				className={`hero-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 md:px-12 md:py-4 text-sm transition-all duration-300 ${navScrolled
+					? "bg-[#faf6eb]/70 backdrop-blur-xl"
+					: "bg-transparent"
+					}`}
+				style={{ opacity: 0 }}
+			>
 				<div className="flex items-center">
 					<Image
 						src="/images/new-life.svg"
 						alt="New Life Logo"
 						width={200}
 						height={60}
-						className="h-12 w-auto object-contain"
+						className="h-12 w-auto object-contain transition-all duration-300"
+						style={{ filter: navScrolled ? "none" : "brightness(0) invert(1)" }}
 						priority
 					/>
 				</div>
-				<div className="hidden md:flex gap-8 lg:gap-10 font-medium tracking-wide uppercase text-xs">
-					<a href="#" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+				<div className={`hidden md:flex gap-8 lg:gap-10 font-medium tracking-wide uppercase text-xs transition-colors duration-300 ${navScrolled ? "text-[#1F384D]" : "text-white"
+					}`}>
+					<a href="#" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Inicio
 					</a>
-					<a href="#nosotros" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+					<a href="#nosotros" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Nosotros
 					</a>
-					<a href="#tratamientos" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+					<a href="#tratamientos" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Tratamientos
 					</a>
-					<a href="#planes" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+					<a href="#planes" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Planes de Salud
 					</a>
-					<a href="#contacto" className="hover:text-[#05835d] text-[#1F384D] transition-colors flex items-center gap-2">
+					<a href="#contacto" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Contacto
 					</a>
 				</div>
 				<div className="flex items-center gap-4">
 					{/* Desktop CTA Button */}
-					<a href="#contacto" className="hidden md:inline-block font-medium tracking-wide uppercase text-xs border border-[#054273] text-[#054273] rounded-full px-6 py-2.5 hover:bg-[#054273] hover:text-[#D9D4CC] transition-all duration-300 shadow-sm hover:shadow-md">
+					<a
+						href="#contacto"
+						className={`hidden md:inline-block font-medium tracking-wide uppercase text-xs border rounded-full px-6 py-2.5 transition-all duration-300 shadow-sm hover:shadow-md ${navScrolled
+							? "border-[#054273] text-[#054273] hover:bg-[#054273] hover:text-[#D9D4CC]"
+							: "border-white/40 text-white hover:bg-white hover:text-[#054273]"
+							}`}
+					>
 						Agendar Cita
 					</a>
 
 					{/* Mobile Hamburger Button */}
 					<button
 						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-						className="md:hidden w-12 h-12 rounded-full border border-[#054273] flex flex-col items-center justify-center gap-1 z-50 relative group focus:outline-none transition-colors duration-300"
+						className={`md:hidden w-12 h-12 rounded-full border flex flex-col items-center justify-center gap-1 z-50 relative group focus:outline-none transition-colors duration-300 ${navScrolled ? "border-[#054273]" : "border-white/30"
+							}`}
 						aria-label="Toggle Menu"
 					>
-						<span className={`h-0.5 w-5 bg-[#054273] rounded-sm transition-all duration-300 ${mobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`}></span>
-						<span className={`h-0.5 w-5 bg-[#054273] rounded-sm transition-all duration-300 ${mobileMenuOpen ? "opacity-0 scale-0" : ""}`}></span>
-						<span className={`h-0.5 w-5 bg-[#054273] rounded-sm transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""}`}></span>
+						<span className={`h-0.5 w-5 rounded-sm transition-all duration-300 ${mobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""} ${navScrolled || mobileMenuOpen ? "bg-[#054273]" : "bg-white"
+							}`}></span>
+						<span className={`h-0.5 w-5 rounded-sm transition-all duration-300 ${mobileMenuOpen ? "opacity-0 scale-0" : ""} ${navScrolled ? "bg-[#054273]" : "bg-white"
+							}`}></span>
+						<span className={`h-0.5 w-5 rounded-sm transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 -translate-y-[6px]" : ""} ${navScrolled || mobileMenuOpen ? "bg-[#054273]" : "bg-white"
+							}`}></span>
 					</button>
 				</div>
 			</nav>
@@ -910,61 +1364,88 @@ export default function Home() {
 				<div className="mask-section-2 relative w-full h-screen z-10 bg-[#054273] text-[#D9D4CC] overflow-hidden">
 					{/* Section 1: Hero (nested inside, absolute inset-0 on top of the parent) */}
 					<div className="mask-section-1 absolute inset-0 z-20 overflow-hidden bg-[#D9D4CC]" style={{ clipPath: "circle(100% at 50% 50%)", transformOrigin: "center center", willChange: "transform, clip-path, opacity" }}>
-						<main className="min-h-screen flex flex-col lg:flex-row relative">
-							{/* Left: Text Content Area */}
-							<div className="hero-left-col flex-1 flex flex-col justify-center px-6 md:px-12 pt-16 pb-12 lg:py-0 z-10 relative" style={{ opacity: 0 }}>
-								<div className="max-w-2xl">
-									<div className="mb-8 overflow-visible">
-										<h1 className="hero-h1 text-5xl sm:text-6xl lg:text-7xl xl:text-9xl leading-[0.8] font-bold tracking-tighter text-[#054273] leading-tight font-serif uppercase whitespace-normal pt-12 md:pt-0 lg:whitespace-nowrap select-none -ml-1.5" style={{ opacity: 0 }}>
-											REGENERA TU SALUD<span className="text-[#05835d]">.</span>
-										</h1>
-									</div>
+						<main className="min-h-screen relative flex flex-col justify-between overflow-hidden">
+							{/* Background Image Container */}
+							<div className="hero-right-col absolute inset-0 z-0 overflow-hidden" style={{ opacity: 0 }}>
+								<Image
+									src="/images/hero-image.jpg"
+									alt="New Life Center"
+									fill
+									className="object-cover object-center"
+									priority
+									sizes="100vw"
+								/>
+								{/* Dark overlay gradients for contrast */}
+								<div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/15 to-transparent z-10 pointer-events-none" />
 
-									<p className="hero-p text-lg md:text-xl text-[#1F384D] leading-relaxed mb-10 max-w-lg font-normal opacity-90" style={{ opacity: 0 }}>
-										No nos limitamos a tratar síntomas, abordamos el origen del problema. Un reset total de su metabolismo mediante medicina integrativa, celular y terapias alternativas.
-									</p>
+								{/* Glassmorphic vertical panel overlay on the right to frame molecular graphics */}
+								{/* <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[45%] xl:w-[50%] bg-[#054273]/10 backdrop-blur-[1px] border-l border-white/5 z-10 pointer-events-none" /> */}
 
-									<a href="#nosotros" className="hero-a group relative inline-flex items-center gap-4 text-sm font-medium uppercase tracking-widest text-[#054273] hover:text-[#05835d]" style={{ opacity: 0 }}>
-										<span className="w-12 h-12 rounded-full border border-[#054273] flex items-center justify-center group-hover:bg-[#05835d] group-hover:border-[#05835d] group-hover:text-white transition-all duration-300">
-											<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-												<path d="M5 12h14"></path>
-												<path d="m12 5 7 7-7 7"></path>
-											</svg>
-										</span>
-										Descubre el protocolo
-									</a>
+								{/* Interactive Particle System Canvas for Cell Simulation (covers full screen) */}
+								<div className="absolute inset-0 z-20 pointer-events-auto overflow-hidden">
+									<canvas
+										ref={canvasRef}
+										className="absolute top-0 left-0 w-screen h-screen opacity-80 pointer-events-auto"
+									/>
+								</div>
+							</div>
+
+							{/* Foreground Content Area */}
+							<div className="hero-left-col z-10 flex-1 flex flex-col justify-between px-6 md:px-12 pt-36 pb-12 lg:pt-48 lg:pb-32 relative" style={{ opacity: 0 }}>
+
+								{/* Upper Section: Main Title */}
+								<div className="max-w-7xl w-full mb-8">
+									<h1 className="hero-h1 text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-light tracking-wider text-white leading-tight font-serif uppercase select-none" style={{ opacity: 0 }}>
+										Es momento de <br className="hidden sm:inline" />
+										<span className="font-semibold text-[#D9D4CC] drop-shadow-sm">optimizar tu vida</span>
+									</h1>
 								</div>
 
-								{/* Bottom Grid Info inspired by Nervana cards */}
-								<div className="absolute bottom-0 left-0 w-full hidden lg:grid grid-cols-2">
-									<div className="hero-card-desktop p-8 border-t border-[#054273]/10 border-r border-[#054273]/10 relative group cursor-pointer hover:bg-[#E5E1D8]/40" style={{ opacity: 0 }}>
+								{/* Middle Section: Text Block & Buttons (aligned to the left) */}
+								<div className="max-w-2xl w-full mb-12 sm:mb-20">
+									<div className="hero-p mb-8" style={{ opacity: 0 }}>
+										<h2 className="text-[#c1aa58] text-xs sm:text-sm font-bold uppercase tracking-[0.2em] mb-3 drop-shadow-sm">
+											MEJORA TU SALUD DESDE LA MOLÉCULA
+										</h2>
+										<p className="text-sm sm:text-base md:text-lg text-white/90 leading-relaxed max-w-xl font-normal drop-shadow-xs">
+											Medicina funcional, regenerativa y terapias avanzadas para tratar enfermedades crónicas, neurológicas y metabólicas desde la causa raíz.
+										</p>
+									</div>
+
+									{/* Action Buttons */}
+									<div className="hero-a flex flex-wrap gap-4 items-center" style={{ opacity: 0 }}>
+										<a
+											href="#contacto"
+											className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-white bg-black/45 backdrop-blur-md border border-white/10 hover:bg-[#05835d] hover:border-[#05835d] shadow-lg hover:shadow-xl transition-all duration-300"
+										>
+											Agendar cita
+										</a>
+										<a
+											href="#nosotros"
+											className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-white bg-white/5 backdrop-blur-sm border border-white/20 hover:bg-white hover:text-[#054273] shadow-md transition-all duration-300"
+										>
+											Enfermedades que tratamos
+										</a>
+									</div>
+								</div>
+
+								{/* Bottom Grid Info: restyled as modern glassmorphic cards */}
+								<div className="absolute bottom-0 left-0 w-full hidden lg:grid grid-cols-2 z-20">
+									<div className="hero-card-desktop p-8 border-t border-white/10 border-r border-white/10 relative group cursor-pointer bg-black/10 backdrop-blur-md hover:bg-[#054273]/30 transition-all duration-500" style={{ opacity: 0 }}>
 										<div className="absolute top-8 right-8 text-[#c1aa58] text-2xl font-bold transition-transform duration-500 group-hover:rotate-90 select-none">*</div>
-										<h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4 text-[#05835d]">Medicina Ortomolecular</h3>
-										<p className="text-sm font-medium text-[#1F384D] leading-snug pr-8">
+										<h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4 text-[#c1aa58]">Medicina Ortomolecular</h3>
+										<p className="text-sm font-medium text-white/80 leading-snug pr-8">
 											Limpieza profunda del "filtro interno", liberando la carga tóxica de órganos vitales.
 										</p>
 									</div>
-									<div className="hero-card-desktop p-8 relative border-t border-[#054273]/10 group cursor-pointer hover:bg-[#E5E1D8]/40" style={{ opacity: 0 }}>
+									<div className="hero-card-desktop p-8 relative border-t border-white/10 group cursor-pointer bg-black/10 backdrop-blur-md hover:bg-[#054273]/30 transition-all duration-500" style={{ opacity: 0 }}>
 										<div className="absolute top-8 right-8 text-[#c1aa58] text-2xl font-bold transition-transform duration-500 group-hover:rotate-90 select-none">*</div>
-										<h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4 text-[#05835d]">Regeneración Celular</h3>
-										<p className="text-sm font-medium text-[#1F384D] leading-snug pr-8">
+										<h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4 text-[#c1aa58]">Regeneración Celular</h3>
+										<p className="text-sm font-medium text-white/80 leading-snug pr-8">
 											Sueroterapias y terapias complementarias para restaurar tu equilibrio biológico.
 										</p>
 									</div>
 								</div>
-							</div>
-
-							{/* Right: Image Area */}
-							<div className="hero-right-col lg:w-[45%] xl:w-[50%] min-h-[50vh] lg:min-h-screen relative overflow-hidden" style={{ opacity: 0 }}>
-								<div className="absolute inset-0 bg-black/5 z-10 mix-blend-overlay pointer-events-none" />
-								<Image
-									src="/images/hero-v2.jpg"
-									alt="New Life Center"
-									fill
-									className="object-cover object-right animate-pulse-slow"
-									priority
-									sizes="(max-width: 1024px) 100vw, 50vw"
-								/>
 							</div>
 						</main>
 
@@ -990,9 +1471,9 @@ export default function Home() {
 					{/* Section 2 Content layer (positioned underneath Section 1) */}
 					<div className="absolute inset-0 z-10 flex flex-col bg-[#054273] text-[#D9D4CC] overflow-hidden">
 						{/* Background Image with reduced brightness and overlay */}
-						<div className="absolute inset-0 z-0 opacity-35 filter brightness-[0.35] contrast-[1.1]">
+						<div className="section2-bg-image absolute inset-0 z-0 opacity-35 filter brightness-[0.35] contrast-[1.1] scale-125">
 							<Image
-								src="/images/bg.jpg"
+								src="/images/bg-newlife.jpg"
 								alt="Fondo bioquímico"
 								fill
 								className="object-cover object-center"
@@ -1001,283 +1482,305 @@ export default function Home() {
 							/>
 						</div>
 						{/* Decorative overlay gradients */}
-						<div className="absolute inset-0 bg-gradient-to-b from-[#054273]/70 via-[#054273]/85 to-[#054273]/95 z-0 mix-blend-multiply"></div>
+						{/* <div className="absolute inset-0 bg-gradient-to-b from-[#054273]/70 via-[#054273]/85 to-[#054273]/95 z-0 mix-blend-multiply"></div> */}
 						<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(193,170,88,0.15),transparent_60%)] z-0"></div>
 
 						{/* Phrases scrollable track */}
 						<div className="mask-phrases-scroll absolute top-0 left-0 w-full h-[300%] z-10 flex flex-col">
 							{/* Phrase 1 Section */}
 							<div className="h-1/3 flex flex-col items-center justify-center px-6 relative z-10 border-b border-[#D9D4CC]/5">
-								<div className="flex flex-col items-center gap-6 text-center max-w-3xl">
-									<span className="text-[#c1aa58] text-4xl font-bold select-none">*</span>
-									<p className="text-2xl sm:text-4xl lg:text-5xl font-serif text-[#D9D4CC] leading-[1.3] tracking-wide">
-										"La salud no es la ausencia de enfermedad, es la plenitud de tu energía celular."
+								<div className="flex flex-col items-center gap-4 text-center max-w-6xl">
+									<span className="text-[#c1aa58] text-3xl font-bold select-none mb-1">*</span>
+									<h4 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase tracking-wider text-[#c1aa58] font-serif">
+										Es momento de optimizar tu vida
+									</h4>
+									<p className="text-lg sm:text-2xl lg:text-3xl font-serif text-[#D9D4CC] leading-relaxed max-w-3xl">
+										Somos un centro médico de medicina integrativa y ortomolecular. Nos especializamos en tratar las enfermedades desde la molécula.
 									</p>
-									<span className="text-xs uppercase tracking-[0.25em] text-[#05835d] font-bold">New Life Center</span>
 								</div>
 							</div>
 
 							{/* Phrase 2 Section */}
 							<div className="h-1/3 flex flex-col items-center justify-center px-6 relative z-10 border-b border-[#D9D4CC]/5">
-								<div className="flex flex-col items-center gap-6 text-center max-w-3xl">
-									<span className="text-[#c1aa58] text-4xl font-bold select-none">*</span>
-									<p className="text-2xl sm:text-4xl lg:text-5xl font-serif text-[#D9D4CC] leading-[1.3] tracking-wide">
-										"Cada célula de tu cuerpo tiene la capacidad innata de sanar y regenerarse."
+								<div className="flex flex-col items-center gap-4 text-center max-w-6xl">
+									<span className="text-[#c1aa58] text-3xl font-bold select-none mb-1">*</span>
+									<h4 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase tracking-wider text-[#c1aa58] font-serif">
+										Experimenta una transformación profunda
+									</h4>
+									<p className="text-lg sm:text-2xl lg:text-3xl font-serif text-[#D9D4CC] leading-relaxed max-w-3xl">
+										Desde un sueño reparador, hasta un aumento notable en tu vitalidad y enfoque mental.
 									</p>
-									<span className="text-xs uppercase tracking-[0.25em] text-[#05835d] font-bold">Medicina Celular</span>
 								</div>
 							</div>
 
 							{/* Phrase 3 Section */}
 							<div className="h-1/3 flex flex-col items-center justify-center px-6 relative z-10">
-								<div className="flex flex-col items-center gap-6 text-center max-w-3xl">
-									<span className="text-[#c1aa58] text-4xl font-bold select-none">*</span>
-									<p className="text-2xl sm:text-4xl lg:text-5xl font-serif text-[#D9D4CC] leading-[1.3] tracking-wide">
-										"El equilibrio bioquímico es el mapa para recuperar tu vitalidad."
+								<div className="flex flex-col items-center gap-4 text-center max-w-6xl">
+									<span className="text-[#c1aa58] text-3xl font-bold select-none mb-1">*</span>
+									<h4 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase tracking-wider text-[#c1aa58] font-serif">
+										Abordamos el origen del problema desde la célula
+									</h4>
+									<p className="text-lg sm:text-2xl lg:text-3xl font-serif text-[#D9D4CC] leading-relaxed max-w-3xl">
+										Desintoxicación celular profunda con precisión científica, para liberar de toxinas tu cuerpo.
 									</p>
-									<span className="text-xs uppercase tracking-[0.25em] text-[#05835d] font-bold">Bienestar Integral</span>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				{/* Section: Nosotros */}
-				<section id="nosotros" className="bg-[#D2CDC5] border-t border-[#054273]/10 relative overflow-hidden">
-					{/* Top Part: Split layout inspired by Nervana */}
-					<div className="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[85vh] border-b border-[#054273]/10">
-						{/* Left: Image (flushed to edges) */}
-						<div className="nosotros-left-img lg:col-span-5 relative min-h-[45vh] lg:min-h-full" style={{ opacity: 0 }}>
-							<Image
-								src="/images/nosotros.png"
-								alt="Equipo New Life"
-								fill
-								className="object-cover object-center"
-								sizes="(max-width: 1024px) 100vw, 42vw"
-								priority
-							/>
-						</div>
-
-						{/* Right: Text and Symptom Arrow Area */}
-						<div className="lg:col-span-7 py-16 px-6 md:px-12 lg:py-24 lg:px-20 flex flex-col justify-center bg-[#D2CDC5] border-t lg:border-t-0 lg:border-l border-[#054273]/10">
-							<div className="max-w-2xl">
-								<h2 className="nosotros-reveal text-xs font-semibold uppercase tracking-[0.25em] text-[#05835d] mb-4" style={{ opacity: 0 }}>Quiénes Somos</h2>
-								<h3 className="nosotros-reveal text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#054273] font-serif mb-6 leading-[1.1]" style={{ opacity: 0 }}>
-									New Life es para todos
-								</h3>
-								<p className="nosotros-reveal text-sm md:text-base text-[#1F384D] leading-relaxed max-w-xl font-normal opacity-90 mb-4" style={{ opacity: 0 }}>
-									Somos un centro médico especializado en <strong>Medicina Integrativa y Terapias Alternativas</strong>. Abordamos el origen bioquímico de tus padecimientos mediante tratamientos dirigidos a nivel celular.
-								</p>
-								<p className="nosotros-reveal text-sm md:text-base text-[#1F384D] leading-relaxed max-w-xl font-normal opacity-90" style={{ opacity: 0 }}>
-									Nuestro equipo multidisciplinario de médicos y terapeutas se enfoca en restaurar tu salud total sin limitarse a tapar síntomas.
-								</p>
-
-								{/* Divider */}
-								<div className="nosotros-reveal border-b border-[#054273]/10 my-8 w-full" style={{ opacity: 0 }}></div>
-
-								{/* Middle: Arrow + treated issues list */}
-								<div className="grid grid-cols-12 gap-6 sm:gap-12 items-center my-6">
-									{/* Straight minimalist line arrow (restored with thinner stroke) */}
-									<div className="nosotros-arrow col-span-3 hidden sm:flex justify-center items-center pr-4" style={{ opacity: 0 }}>
-										<svg viewBox="0 0 200 40" fill="none" className="w-full text-[#054273] opacity-50">
-											<path d="M0 20H190" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-											<path d="M180 10L190 20L180 30" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-										</svg>
-									</div>
-
-									{/* List of treated padecimientos */}
-									<div className="nosotros-list col-span-12 sm:col-span-9" style={{ opacity: 0 }}>
-										<div className="flex items-center gap-2 mb-4">
-											<span className="text-[#c1aa58] text-xl font-bold select-none">*</span>
-											<span className="text-xs font-semibold uppercase tracking-wider text-[#05835d]">Tratamos la raíz de:</span>
-										</div>
-										<div className="grid grid-cols-1 gap-2.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#1F384D] font-mono">
-											<div className="flex items-center gap-2"><span className="text-[#c1aa58] font-bold">•</span> Dolor de Espalda y Articular</div>
-											<div className="flex items-center gap-2"><span className="text-[#c1aa58] font-bold">•</span> Fatiga Crónica y Estrés</div>
-											<div className="flex items-center gap-2"><span className="text-[#c1aa58] font-bold">•</span> Insomnio y Migrañas</div>
-											<div className="flex items-center gap-2"><span className="text-[#c1aa58] font-bold">•</span> Desequilibrio Hormonal</div>
-											<div className="flex items-center gap-2"><span className="text-[#c1aa58] font-bold">•</span> Inflamación Celular</div>
-											<div className="flex items-center gap-2"><span className="text-[#c1aa58] font-bold">•</span> Desintoxicación Orgánica</div>
-										</div>
-									</div>
-								</div>
-
-								{/* CTA Button */}
-								<div className="nosotros-cta mt-8" style={{ opacity: 0 }}>
-									<a href="#contacto" className="group relative inline-flex items-center gap-4 text-xs font-semibold uppercase tracking-widest text-[#D9D4CC] bg-[#054273] hover:bg-[#05835d] px-8 py-4 rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
-										Agendar Evaluación Celular
-										<span className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-white transition-transform duration-500 group-hover:rotate-90">
-											*
-										</span>
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* Bottom Part: Mission, Vision, and Values in max-w container */}
-					<div className="max-w-7xl mx-auto py-24 px-6 md:px-12">
-						{/* Mission & Vision Cards */}
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-							{/* Vision */}
-							<div className="nosotros-card p-8 rounded-2xl border border-[#054273]/10 bg-[#E5E1D8]/60 hover:bg-[#E5E1D8]/95 relative group shadow-sm hover:shadow-md" style={{ opacity: 0 }}>
-								<div className="absolute top-8 right-8 text-[#c1aa58] text-2xl font-bold select-none">*</div>
-								<h4 className="text-xs font-semibold uppercase tracking-[0.2em] mb-4 text-[#05835d]">Nuestra Visión</h4>
-								<p className="text-lg font-medium text-[#054273] font-serif leading-relaxed mb-4">
-									“Ser el centro médico de referencia líder en medicina Ortomolecular y Terapias Alternativas, reconocidos por nuestra excelencia científica y trato humano.”
-								</p>
-								<p className="text-xs text-[#1F384D]/70 font-semibold tracking-wider uppercase">
-									Aspiramos a transformar el paradigma de la salud: optimizando la vida humana, un paciente y una célula a la vez.
-								</p>
+				<section id="nosotros" className="bg-[#F5F0E5] relative overflow-hidden pt-24 px-6 md:px-12 lg:px-24 min-h-[85vh] flex items-center">
+					<div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+						{/* Left: Text Content */}
+						<div className="lg:col-span-6 flex flex-col justify-center">
+							{/* Category Tag with Line */}
+							<div className="flex items-center gap-4 mb-6 nosotros-reveal" style={{ opacity: 0 }}>
+								<span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[#05835d] font-mono">QUIÉNES SOMOS</span>
+								<div className="h-[1.2px] bg-[#054273]/10 flex-grow"></div>
 							</div>
 
-							{/* Mission */}
-							<div className="nosotros-card p-8 rounded-2xl border border-[#054273]/10 bg-[#E5E1D8]/60 hover:bg-[#E5E1D8]/95 relative group shadow-sm hover:shadow-md" style={{ opacity: 0 }}>
-								<div className="absolute top-8 right-8 text-[#c1aa58] text-2xl font-bold select-none">*</div>
-								<h4 className="text-xs font-semibold uppercase tracking-[0.2em] mb-4 text-[#05835d]">Nuestra Misión</h4>
-								<p className="text-lg font-medium text-[#054273] font-serif leading-relaxed mb-4">
-									“Transformar la calidad de vida de nuestros pacientes a través de la Medicina Ortomolecular y Terapias Alternativas.”
-								</p>
-								<p className="text-xs text-[#1F384D]/70 font-semibold tracking-wider uppercase">
-									Restauramos el equilibrio bioquímico desde la célula para lograr una salud integral, consciente y duradera.
-								</p>
+							{/* Consistent serif title */}
+							<h2 className="nosotros-reveal text-4xl sm:text-5xl lg:text-[54px] font-semibold tracking-tight text-[#054273] font-serif leading-[1.15] mb-10" style={{ opacity: 0 }}>
+								Medicina 100%<br />Integrativa y Natural
+							</h2>
+
+							{/* Monospace Subtitle */}
+							<span className="nosotros-reveal text-[10px] font-bold tracking-[0.25em] text-[#05835d] uppercase font-mono mb-2" style={{ opacity: 0 }}>
+								RESTAURACIÓN MOLECULAR Y NATURAL
+							</span>
+
+							{/* Dotted separator line */}
+							<div className="nosotros-reveal text-[#054273]/30 tracking-widest font-mono text-sm mb-18 select-none" style={{ opacity: 0 }}>
+								......................
+							</div>
+
+							{/* Body Paragraphs in dark text */}
+							<p className="nosotros-reveal text-sm md:text-base text-[#1F384D]/90 leading-relaxed font-normal mb-5 max-w-xl" style={{ opacity: 0 }}>
+								Todos nuestros tratamientos se basan en medicina integrativa y ortomolecular: tratamientos 100% biocompatibles que respetan el diseño original de tu cuerpo.
+							</p>
+							<p className="nosotros-reveal text-sm md:text-base text-[#1F384D]/90 leading-relaxed font-normal mb-8 max-w-xl" style={{ opacity: 0 }}>
+								Sin químicos sintéticos ni soluciones artificiales. Sin efectos secundarios agresivos, respaldado por profesionales de la salud.
+							</p>
+
+							{/* AGENDAR CITA button */}
+							<div className="nosotros-cta mt-2" style={{ opacity: 0 }}>
+								<a href="#contacto" className="inline-block text-center text-xs font-bold uppercase tracking-widest text-white bg-[#054273] hover:bg-[#05835d] transition-colors duration-300 px-10 py-4 rounded-full shadow-md hover:shadow-lg">
+									AGENDAR CITA
+								</a>
 							</div>
 						</div>
 
-						{/* Values Grid */}
-						<div className="pt-12 border-t border-[#054273]/10">
-							<h4 className="valores-title text-xs font-semibold uppercase tracking-[0.2em] text-center text-[#054273] mb-8" style={{ opacity: 0 }}>
-								Valores que guían nuestra práctica médica
-							</h4>
-							<div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-								{VALORES.map((val, idx) => (
-									<div key={idx} className="valor-tag px-5 py-2.5 rounded-full border border-[#054273]/10 bg-[#D9D4CC]/80 text-[#1F384D] text-xs font-semibold tracking-wide uppercase flex items-center gap-2 hover:bg-[#05835d]/10 hover:text-[#05835d] hover:border-[#05835d]/30" style={{ opacity: 0 }}>
-										<span className="w-1.5 h-1.5 rounded-full bg-[#05835d]"></span>
-										{val}
-									</div>
-								))}
+						{/* Right: Circular Blueprint Graphic Box */}
+						<div className="lg:col-span-6 w-full flex justify-center items-center">
+							<div className="nosotros-particles-container w-[320px] h-[320px] sm:w-[400px] sm:h-[400px] lg:w-[460px] lg:h-[460px] rounded-full bg-[#ECE7DC]/40 border border-[#054273]/15 flex items-center justify-center relative shadow-sm hover:shadow-md transition-shadow duration-300" style={{ opacity: 0 }}>
+								<canvas
+									ref={canvasNosotrosRef}
+									className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 rounded-full"
+								/>
 							</div>
 						</div>
 					</div>
 				</section>
 
-				{/* Section: Tratamientos & Terapias */}
-				<section id="tratamientos" className="py-24 px-6 md:px-12 bg-[#D9D4CC] relative">
-					<div className="max-w-7xl mx-auto">
-						<div className="text-center max-w-3xl mx-auto mb-16">
-							<h2 className="tratamientos-reveal text-xs font-semibold uppercase tracking-[0.25em] text-[#05835d] mb-4" style={{ opacity: 0 }}>Terapias y Servicios</h2>
-							<h3 className="tratamientos-reveal text-4xl sm:text-5xl font-semibold tracking-tight text-[#054273] font-serif mb-6" style={{ opacity: 0 }}>
-								El Poder del Equilibrio Molecular
-							</h3>
-							<p className="tratamientos-reveal text-base text-[#1F384D] opacity-90 leading-relaxed" style={{ opacity: 0 }}>
-								En New Life, combinamos precisión científica con terapias biológicas avanzadas. No tapamos síntomas; desintoxicamos y regeneramos la salud celular.
-							</p>
+				{/* Section: Enfermedades que tratamos (Cortina Transition) */}
+				<section id="enfermedades" className="w-full relative overflow-hidden bg-[#F5F0E5] p-0 h-screen flex flex-col justify-between">
+
+					<div className="flex items-center justify-center z-20 pointer-events-none pt-24 pb-8 flex-shrink-0">
+						<h2 className="enfermedades-reveal text-4xl sm:text-5xl lg:text-[64px] font-semibold tracking-tight text-[#054273] font-serif text-center px-4 py-12" style={{ opacity: 0 }}>
+							Enfermedades que tratamos
+						</h2>
+					</div>
+
+					<div className="grid grid-cols-1 md:grid-cols-3 w-full flex-grow gap-0 overflow-hidden">
+						{/* Card 1: Knee pain */}
+						<div className="enfermedades-card group relative w-full h-full overflow-hidden cursor-pointer" style={{ opacity: 0 }}>
+							<Image
+								src="/images/knee.jpg"
+								alt="Dolor Articular"
+								fill
+								className="object-cover transition-transform duration-700 group-hover:scale-105"
+								sizes="(max-width: 768px) 100vw, 33vw"
+								priority
+							/>
+							<div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 z-10 transition-opacity duration-300 group-hover:opacity-40" />
 						</div>
 
-						<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
-							{/* Left Column: List of therapies in card grids */}
-							<div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
-								{/* Therapy Card 1 */}
-								<div className="terapia-card p-6 rounded-2xl border border-[#054273]/10 bg-[#E5E1D8]/30 hover:bg-[#E5E1D8]/65" style={{ opacity: 0 }}>
-									<div className="w-10 h-10 bg-[#05835d]/10 rounded-xl flex items-center justify-center text-[#05835d] mb-4">
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-											<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+						{/* Card 2: Woman with inhalation mask */}
+						<div className="enfermedades-card group relative w-full h-full overflow-hidden cursor-pointer" style={{ opacity: 0 }}>
+							<Image
+								src="/images/woman.jpg"
+								alt="Alergias y Asma"
+								fill
+								className="object-cover transition-transform duration-700 group-hover:scale-105"
+								sizes="(max-width: 768px) 100vw, 33vw"
+								priority
+							/>
+							<div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 z-10 transition-opacity duration-300 group-hover:opacity-40" />
+						</div>
+
+						{/* Card 3: Legs in sauna */}
+						<div className="enfermedades-card group relative w-full h-full overflow-hidden cursor-pointer" style={{ opacity: 0 }}>
+							<Image
+								src="/images/leg.jpg"
+								alt="Insuficiencia Venosa"
+								fill
+								className="object-cover transition-transform duration-700 group-hover:scale-105"
+								sizes="(max-width: 768px) 100vw, 33vw"
+								priority
+							/>
+							<div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 z-10 transition-opacity duration-300 group-hover:opacity-40" />
+						</div>
+					</div>
+				</section>
+
+				{/* Section: List of enfermedades treated */}
+				<section id="enfermedades-list" className="py-28 px-6 md:px-12 relative overflow-hidden bg-black flex items-center min-h-screen">
+					{/* Background Image */}
+					<div className="section4-bg-image absolute inset-0 z-0 scale-125">
+						<Image
+							src="/images/enfermedades.jpg"
+							alt="Patologías Tratadas Background"
+							fill
+							className="object-cover pointer-events-none select-none"
+							priority
+						/>
+						{/* Soft overlay to ensure readability */}
+						<div className="absolute inset-0 bg-[#f5f0e5]/90 mix-blend-multiply z-0" />
+						<div className="absolute inset-0 bg-gradient-to-b from-[#f5f0e5]/80 via-[#f5f0e5]/20 to-[#f5f0e5]/90 z-0" />
+					</div>
+
+					<div className="max-w-7xl mx-auto w-full relative z-10 flex flex-col items-center">
+						{/* Row 1: 3 columns */}
+						<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full mb-12 auto-rows-fr auto-cols-fr">
+							{/* Card 1: Diábetes */}
+							<div className="list-card h-full group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
+								{/* Icon */}
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/8 rounded-2xl p-6 min-h-[220px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+									<div className="mb-4 w-10 h-10 flex items-center justify-center text-[#05835d] group-hover:scale-110 transition-transform duration-300">
+										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+											<path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 12 2 12 2C12 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+											<path d="M12 2v20" />
+											<path d="M12 7C9.5 9 9.5 13 12 15" />
+											<path d="M12 11C14.5 13 14.5 17 12 19" />
 										</svg>
 									</div>
-									<h4 className="text-base font-semibold text-[#054273] mb-2">Sueroterapias Ortomoleculares</h4>
-									<p className="text-xs text-[#1F384D]/90 leading-relaxed">
-										Paquete de 4 sesiones de regeneración, revitalización y optimización celular profunda para equilibrar nutrientes directamente en el torrente sanguíneo.
-									</p>
-								</div>
-
-								{/* Therapy Card 2 */}
-								<div className="terapia-card p-6 rounded-2xl border border-[#054273]/10 bg-[#E5E1D8]/30 hover:bg-[#E5E1D8]/65" style={{ opacity: 0 }}>
-									<div className="w-10 h-10 bg-[#05835d]/10 rounded-xl flex items-center justify-center text-[#05835d] mb-4">
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-											<circle cx="12" cy="12" r="10"></circle>
-											<path d="m4.93 4.93 14.14 14.14M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-										</svg>
-									</div>
-									<h4 className="text-base font-semibold text-[#054273] mb-2">Terapias de Quelación</h4>
-									<p className="text-xs text-[#1F384D]/90 leading-relaxed">
-										Paquete de 4 sesiones de terapia endovenosa específica para remover metales pesados y limpiar el sistema circulatorio, reduciendo la calcificación arterial.
-									</p>
-								</div>
-
-								{/* Therapy Card 3 */}
-								<div className="terapia-card p-6 rounded-2xl border border-[#054273]/10 bg-[#E5E1D8]/30 hover:bg-[#E5E1D8]/65" style={{ opacity: 0 }}>
-									<div className="w-10 h-10 bg-[#05835d]/10 rounded-xl flex items-center justify-center text-[#05835d] mb-4">
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-											<path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"></path>
-											<path d="M12 6V12L16 14"></path>
-										</svg>
-									</div>
-									<h4 className="text-base font-semibold text-[#054273] mb-2">Desintoxicación Iónica</h4>
-									<p className="text-xs text-[#1F384D]/90 leading-relaxed">
-										Paquete de 6 sesiones + tratamiento oral para depurar y equilibrar el pH corporal a través de ósmosis iónica en pediluvio.
-									</p>
-								</div>
-
-								{/* Therapy Card 4 */}
-								<div className="terapia-card p-6 rounded-2xl border border-[#054273]/10 bg-[#E5E1D8]/30 hover:bg-[#E5E1D8]/65" style={{ opacity: 0 }}>
-									<div className="w-10 h-10 bg-[#05835d]/10 rounded-xl flex items-center justify-center text-[#05835d] mb-4">
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-											<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
-											<path d="M6 6h10M6 10h10"></path>
-										</svg>
-									</div>
-									<h4 className="text-base font-semibold text-[#054273] mb-2">Fitoterapia Avanzada</h4>
-									<p className="text-xs text-[#1F384D]/90 leading-relaxed">
-										Tratamientos fitoterapéuticos orales con extractos herbales estandarizados y avalados científicamente para corregir problemas fisiológicos.
-									</p>
-								</div>
-							</div>
-
-							{/* Right Column: Visual lounge / pain management therapies banner */}
-							<div className="terapia-banner lg:col-span-5 relative group flex flex-col justify-between p-8 rounded-2xl border border-[#054273]/10 bg-[#E5E1D8]/40 overflow-hidden shadow-sm" style={{ opacity: 0 }}>
-								<div className="absolute inset-0 z-0">
-									<Image
-										src="/images/tratamientos.png"
-										alt="Sala de Sueroterapia"
-										fill
-										className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-25 group-hover:opacity-30"
-										sizes="(max-width: 1024px) 100vw, 40vw"
-									/>
-									<div className="absolute inset-0 bg-gradient-to-t from-[#E5E1D8] via-[#E5E1D8]/80 to-[#E5E1D8]/20 z-0"></div>
-								</div>
-
-								<div className="relative z-10 mb-6">
-									<div className="inline-block px-3 py-1 rounded-full bg-[#05835d]/10 text-[#05835d] text-[10px] font-bold uppercase tracking-wider mb-4">
-										Terapias Integrales
-									</div>
-									<h4 className="text-xl font-semibold text-[#054273] font-serif mb-4 leading-snug">
-										Manejo y Alivio Clínico del Dolor
-									</h4>
-									<p className="text-xs text-[#1F384D]/95 leading-relaxed mb-6 font-normal">
-										Diseñamos esquemas integrados para el dolor (agudo y crónico) combinando técnicas de alta efectividad médica:
-									</p>
-									<ul className="grid grid-cols-2 gap-2.5 text-[11px] text-[#1F384D] font-medium">
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d]"></span> Acupuntura + Electro</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d]"></span> Terapia Neural</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d]"></span> Plasma Rico en Plaquetas</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d]"></span> Presoterapia</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d]"></span> Cupping (Ventosas)</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d]"></span> Autohemoterapia menor</li>
+									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">
+										Diábetes
+									</h3>
+									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Diábetes Mellitus Tipo 2</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Síndrome metabólico</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Reducción y control de peso</li>
 									</ul>
 								</div>
+							</div>
 
-								<div className="relative z-10 pt-4 border-t border-[#054273]/10">
-									<a href="#contacto" className="text-xs font-semibold uppercase tracking-wider text-[#05835d] hover:text-[#054273] transition-colors flex items-center gap-2 cursor-pointer">
-										Solicitar Consulta de Dolor &rarr;
-									</a>
+							{/* Card 2: Hígado Graso */}
+							<div className="list-card h-full group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
+								{/* Icon */}
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/8 rounded-2xl p-6 min-h-[220px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+									<div className="mb-4 w-10 h-10 flex items-center justify-center text-[#05835d] group-hover:scale-110 transition-transform duration-300">
+										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+											<path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+											<path d="M12 6a6 6 0 0 0-6 6c0 3 6 6 6 6s6-3 6-6a6 6 0 0 0-6-6z" />
+											<circle cx="12" cy="12" r="2" />
+										</svg>
+									</div>
+									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">
+										Hígado Graso
+									</h3>
+									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Hígado graso</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Enfermedades del sistema digestivo</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Inflamación</li>
+									</ul>
 								</div>
 							</div>
+
+							{/* Card 3: Hipotiroidismo */}
+							<div className="list-card h-full group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
+								{/* Icon */}
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/8 rounded-2xl p-6 min-h-[220px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+									<div className="mb-4 w-10 h-10 flex items-center justify-center text-[#05835d] group-hover:scale-110 transition-transform duration-300">
+										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+											<path d="M12 5C11 3.5 8 2 6 2C3 2 2 4 2 7C2 12 7 15 12 21C17 15 22 12 22 7C22 4 21 2 18 2C16 2 13 3.5 12 5Z" />
+											<path d="M12 5V21" />
+											<path d="M7 9C9 10 10 12 7 15" />
+											<path d="M17 9C15 10 14 12 17 15" />
+										</svg>
+									</div>
+									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">
+										Hipo e Hipertiroidismo
+									</h3>
+									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Hipo e hipertiroidismo</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />HPB, Prostatitis</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Disfunción eréctil</li>
+										{/* <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Menopausia y bajo libido</li> */}
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						{/* Row 2: 2 centered columns */}
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mx-auto mb-16 auto-rows-fr">
+							{/* Card 4: Dolor Articulaciones */}
+							<div className="list-card group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/5 rounded-3xl p-6 min-h-[220px] flex flex-col justify-start items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+									<div className="mb-4 w-12 h-12 flex items-center justify-center text-[#05835d]">
+										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+											<circle cx="12" cy="12" r="3" />
+											<path d="M12 2v7" />
+											<path d="M12 15v7" />
+											<path d="M2 12h7" />
+											<path d="M15 12h7" />
+											<path d="M19 5l-5 5" />
+											<path d="M10 14l-5 5" />
+										</svg>
+									</div>
+									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">Dolor en Articulaciones</h3>
+									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Artritis</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Artrosis</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Dolores articulares</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Fibromialgia</li>
+									</ul>
+								</div>
+							</div>
+
+							{/* Card 5: Respiratorias */}
+							<div className="list-card group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/5 rounded-3xl p-6 min-h-[220px] flex flex-col justify-start items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+									<div className="mb-4 w-12 h-12 flex items-center justify-center text-[#05835d]">
+										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+											<path d="M12 2v7" />
+											<path d="M12 9a4 4 0 0 0-4-4c-2.5 0-5 2-5 5s2.5 6 5 6a4 4 0 0 0 4-4Z" />
+											<path d="M12 9a4 4 0 0 1 4-4c2.5 0 5 2 5 5s-2.5 6-5 6a4 4 0 0 1-4-4Z" />
+											<path d="M9 18c0 2 1.5 3 3 3s3-1 3-3" />
+										</svg>
+									</div>
+									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">Respiratorias y Piel</h3>
+									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Asma</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Rinitis</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Sinusitis</li>
+										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Enfermedades en la piel</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						{/* CTA Button */}
+						<div className="list-card" style={{ opacity: 0 }}>
+							<a href="#planes" className="inline-block text-center text-xs font-bold uppercase tracking-widest text-[#FAF7F0] bg-[#054273] hover:bg-[#05835d] transition-colors duration-300 px-12 py-5 rounded-full shadow-lg hover:shadow-2xl">
+								VER TODOS PLANES
+							</a>
 						</div>
 					</div>
 				</section>
 
 				{/* Section: Planes de Salud (Interactive Dashboard) */}
-				<section id="planes" className="py-24 px-6 md:px-12 bg-[#D2CDC5] border-t border-b border-[#054273]/10 relative">
+				<section id="planes" className="py-24 px-6 md:px-12 bg-[#FAF7F0] border-t border-b border-[#054273]/10 relative">
 					<div className="max-w-7xl mx-auto">
 						<div className="text-center max-w-3xl mx-auto mb-16">
 							<h2 className="planes-reveal text-xs font-semibold uppercase tracking-[0.25em] text-[#05835d] mb-4" style={{ opacity: 0 }}>Planes Clínicos Específicos</h2>
@@ -1303,7 +1806,7 @@ export default function Home() {
 											onClick={() => setSelectedPlanIndex(idx)}
 											className={`text-left px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer flex items-center justify-between text-xs font-semibold tracking-wide uppercase ${selectedPlanIndex === idx
 												? "bg-[#054273] text-[#D9D4CC] shadow-md"
-												: "hover:bg-[#E5E1D8] text-[#1F384D]"
+												: "hover:bg-white/50 text-[#1F384D]"
 												}`}
 										>
 											<span>{plan.name}</span>
@@ -1314,7 +1817,7 @@ export default function Home() {
 							</div>
 
 							{/* Right: Selected Plan details card */}
-							<div className="planes-content lg:col-span-8 bg-[#E5E1D8] border border-[#054273]/10 rounded-2xl p-8 shadow-md relative min-h-[550px] flex flex-col justify-between" style={{ opacity: 0 }}>
+							<div className="planes-content lg:col-span-8 bg-white/60 border border-[#054273]/10 rounded-2xl p-8 shadow-md relative min-h-[550px] flex flex-col justify-between" style={{ opacity: 0 }}>
 								<div>
 									<div className="flex items-start justify-between flex-wrap gap-4 mb-6">
 										<div>
@@ -1406,7 +1909,7 @@ export default function Home() {
 				</section>
 
 				{/* Section: Contacto */}
-				<section id="contacto" className="py-24 px-6 md:px-12 bg-[#D9D4CC] relative">
+				<section id="contacto" className="py-24 px-6 md:px-12 bg-[#F3EFE3] relative">
 					<div className="max-w-7xl mx-auto">
 						<div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
 							{/* Left: Contact Info & Map Details */}
@@ -1484,7 +1987,7 @@ export default function Home() {
 								</div>
 
 								{/* Styled static layout map element */}
-								<div className="contacto-horario p-6 rounded-2xl border border-[#054273]/10 bg-[#E5E1D8]/30 flex flex-col justify-center" style={{ opacity: 0 }}>
+								<div className="contacto-horario p-6 rounded-2xl border border-[#054273]/10 bg-white/40 flex flex-col justify-center" style={{ opacity: 0 }}>
 									<span className="text-[10px] font-bold uppercase tracking-widest text-[#054273] mb-2 block">
 										Horario de Atención
 									</span>
@@ -1501,7 +2004,7 @@ export default function Home() {
 								<h4 className="text-xl sm:text-2xl font-semibold text-[#054273] font-serif mb-8">Formulario de Consulta e Inscripción</h4>
 
 								{submitted ? (
-									<div className="py-16 text-center bg-[#E5E1D8]/30 border border-[#054273]/10 rounded-2xl p-8">
+									<div className="py-16 text-center bg-white/40 border border-[#054273]/10 rounded-2xl p-8">
 										<div className="w-16 h-16 bg-[#05835d]/10 rounded-full flex items-center justify-center text-[#05835d] mx-auto mb-4">
 											<svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
 												<polyline points="20 6 9 17 4 12"></polyline>
@@ -1576,7 +2079,7 @@ export default function Home() {
 															className="w-full bg-transparent text-base sm:text-lg font-semibold text-[#054273] focus:outline-none py-1.5 cursor-pointer appearance-none pr-8"
 														>
 															{PLANS_DATA.map(plan => (
-																<option key={plan.id} value={plan.id} className="bg-[#D9D4CC] text-[#054273]">
+																<option key={plan.id} value={plan.id} className="bg-[#FAF7F0] text-[#054273]">
 																	{plan.name}
 																</option>
 															))}
@@ -1605,7 +2108,7 @@ export default function Home() {
 										<div className="mt-10 flex justify-end">
 											<button
 												type="submit"
-												className="group relative inline-flex items-center gap-4 text-xs font-semibold uppercase tracking-widest text-[#D9D4CC] bg-[#054273] hover:bg-[#05835d] px-10 py-5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+												className="group relative inline-flex items-center gap-4 text-xs font-semibold uppercase tracking-widest text-white bg-[#054273] hover:bg-[#05835d] px-10 py-5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
 											>
 												Enviar Solicitud de Cita
 												<span className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-white transition-transform duration-500 group-hover:rotate-90">
