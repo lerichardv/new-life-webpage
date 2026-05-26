@@ -1389,7 +1389,7 @@ export default function Home() {
 
 								{/* Upper Section: Main Title */}
 								<div className="max-w-7xl w-full mb-8">
-									<h1 className="hero-h1 text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-light tracking-tight text-white leading-tight font-bodoni uppercase select-none" style={{ opacity: 0 }}>
+									<h1 className="hero-h1 text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-light tracking-wider text-white leading-tight font-serif uppercase select-none" style={{ opacity: 0 }}>
 										Es momento de <br className="hidden sm:inline" />
 										<span className="font-semibold text-[#D9D4CC] drop-shadow-sm">optimizar tu vida</span>
 									</h1>
