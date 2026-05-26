@@ -1017,54 +1017,6 @@ export default function Home() {
 				}
 			);
 
-			// 2. Tratamientos Section
-			gsap.fromTo("#tratamientos .tratamientos-reveal",
-				{ opacity: 0, y: 30 },
-				{
-					opacity: 1,
-					y: 0,
-					duration: 0.8,
-					ease: "power3.out",
-					stagger: 0.12,
-					scrollTrigger: {
-						trigger: "#tratamientos",
-						start: "top 75%",
-						toggleActions: "play none none none"
-					}
-				}
-			);
-
-			gsap.fromTo("#tratamientos .terapia-card",
-				{ opacity: 0, y: 30, scale: 0.97 },
-				{
-					opacity: 1,
-					y: 0,
-					scale: 1,
-					duration: 0.8,
-					ease: "power2.out",
-					stagger: 0.1,
-					scrollTrigger: {
-						trigger: "#tratamientos .terapia-card",
-						start: "top 80%",
-						toggleActions: "play none none none"
-					}
-				}
-			);
-
-			gsap.fromTo("#tratamientos .terapia-banner",
-				{ opacity: 0, x: 30 },
-				{
-					opacity: 1,
-					x: 0,
-					duration: 1.0,
-					ease: "power3.out",
-					scrollTrigger: {
-						trigger: "#tratamientos .terapia-banner",
-						start: "top 80%",
-						toggleActions: "play none none none"
-					}
-				}
-			);
 
 			// 3. Enfermedades Section (Pin & Stagger Curtain reveal)
 			gsap.fromTo("#enfermedades .enfermedades-reveal",
@@ -1437,7 +1389,7 @@ export default function Home() {
 
 								{/* Upper Section: Main Title */}
 								<div className="max-w-7xl w-full mb-8">
-									<h1 className="hero-h1 text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-light tracking-wider text-white leading-tight font-serif uppercase select-none" style={{ opacity: 0 }}>
+									<h1 className="hero-h1 text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-light tracking-tight text-white leading-tight font-bodoni uppercase select-none" style={{ opacity: 0 }}>
 										Es momento de <br className="hidden sm:inline" />
 										<span className="font-semibold text-[#D9D4CC] drop-shadow-sm">optimizar tu vida</span>
 									</h1>
