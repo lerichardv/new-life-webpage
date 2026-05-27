@@ -38,8 +38,8 @@ const PLANS_DATA: Plan[] = [
 	{
 		id: "higacare",
 		name: "HIGACARE",
-		subtitle: "Protección y Regeneración Hepática",
-		description: "Enfocado en desintoxicar las células hepáticas, reducir el hígado graso y optimizar el filtro digestivo primordial.",
+		subtitle: "Depuración, regeneración, optimización y protección hepática",
+		description: "Enfocado en desintoxicar las células hepáticas, reducir el hígado graso y optimizar el funcionamiento del hígado",
 		consultas: "2 consultas médicas completas (evaluación inicial y control final)",
 		desintoxicacion: "Desintoxicación celular profunda oral o intravenosa (IV)",
 		sueroterapia: "4 sesiones de Sueroterapia Ortomolecular (1 sesión semanal durante 1 mes)",
@@ -70,7 +70,7 @@ const PLANS_DATA: Plan[] = [
 		id: "digest",
 		name: "DIGEST",
 		subtitle: "Restauración del Sistema Gastrointestinal",
-		description: "Ideal para combatir Helicobacter pylori, regular la microbiota, sanar la mucosa gástrica y aliviar colitis y gastritis crónicas.",
+		description: "Ideal para combatir Helicobacter pylori, regular la microbiota, sanar la mucosa gástrica, aliviar colitis, gastritis crónica y otras enfermedades del sistema digestivo.",
 		consultas: "2 consultas médicas completas (evaluación inicial y control final)",
 		desintoxicacion: "Desintoxicación celular profunda oral o intravenosa (IV)",
 		sueroterapia: "4 sesiones de Sueroterapia Ortomolecular (1 sesión semanal durante 1 mes)",
@@ -1057,6 +1057,21 @@ export default function Home() {
 				}
 			);
 
+			gsap.fromTo("#tratamientos .enfermedades-2-reveal",
+				{ opacity: 0, y: -40 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 1.0,
+					ease: "power3.out",
+					scrollTrigger: {
+						trigger: "#tratamientos",
+						start: "top 80%",
+						toggleActions: "restart none none none"
+					}
+				}
+			);
+
 			gsap.fromTo("#tratamientos .list-card",
 				{ opacity: 0, y: 50 },
 				{
@@ -1249,10 +1264,10 @@ export default function Home() {
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Nosotros
 					</a>
 					<a href="#tratamientos" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
-						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Tratamientos
+						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Terapias Alternativas
 					</a>
 					<a href="#planes" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
-						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Planes de Salud
+						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Planes de salud integral
 					</a>
 					<a href="#contacto" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Contacto
@@ -1321,14 +1336,14 @@ export default function Home() {
 						onClick={() => setMobileMenuOpen(false)}
 						className="mobile-menu-item text-4xl font-serif font-black tracking-tight uppercase text-[#054273] hover:text-[#05835d] transition-colors duration-300"
 					>
-						Tratamientos
+						Terapias Alternativas
 					</a>
 					<a
 						href="#planes"
 						onClick={() => setMobileMenuOpen(false)}
 						className="mobile-menu-item text-4xl font-serif font-black tracking-tight uppercase text-[#054273] hover:text-[#05835d] transition-colors duration-300"
 					>
-						Planes de Salud
+						Planes de salud integral
 					</a>
 					<a
 						href="#contacto"
@@ -1407,21 +1422,61 @@ export default function Home() {
 									</div>
 
 									{/* Action Buttons */}
-									<div className="hero-a flex flex-wrap gap-4 items-center" style={{ opacity: 0 }}>
-										<a
-											href="https://wa.me/50498580298?text=Hola!%20Me%20interesa%20agendar%20una%20cita."
-											target="_blank"
-											rel="noopener noreferrer"
-											className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-white bg-black/45 backdrop-blur-md border border-white/10 hover:bg-[#05835d] hover:border-[#05835d] shadow-lg hover:shadow-xl transition-all duration-300"
-										>
-											Agendar cita
-										</a>
-										<a
-											href="#enfermedades"
-											className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-white bg-white/5 backdrop-blur-sm border border-white/20 hover:bg-white hover:text-[#054273] shadow-md transition-all duration-300"
-										>
-											Enfermedades que tratamos
-										</a>
+									<div className="hero-a flex flex-col gap-6" style={{ opacity: 0 }}>
+										<div className="flex flex-wrap gap-4 items-center">
+											<a
+												href="https://wa.me/50498580298?text=Hola!%20Me%20interesa%20agendar%20una%20cita."
+												target="_blank"
+												rel="noopener noreferrer"
+												className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-white bg-black/70 backdrop-blur-md border border-white/20 hover:bg-[#05835d] hover:border-[#05835d] shadow-lg hover:shadow-xl transition-all duration-300"
+											>
+												Agendar cita
+											</a>
+											<a
+												href="#enfermedades"
+												className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-white bg-black/60 backdrop-blur-md border border-white/25 hover:bg-white hover:text-[#054273] shadow-md transition-all duration-300"
+											>
+												Enfermedades que tratamos
+											</a>
+										</div>
+										{/* Redes Sociales */}
+										<div className="flex gap-3">
+											<a
+												href="https://www.facebook.com/NewLifeCMO?locale=es_LA"
+												target="_blank"
+												rel="noopener noreferrer"
+												className="w-10 h-10 rounded-full bg-black/65 hover:bg-[#05835d] border border-white/20 flex items-center justify-center text-white transition-all duration-300 backdrop-blur-md hover:scale-105"
+												aria-label="Facebook"
+											>
+												<svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+													<path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
+												</svg>
+											</a>
+											<a
+												href="https://www.instagram.com/newlifecmoterapiasalternativas/?utm_source=ig_web_button_share_sheet"
+												target="_blank"
+												rel="noopener noreferrer"
+												className="w-10 h-10 rounded-full bg-black/65 hover:bg-[#05835d] border border-white/20 flex items-center justify-center text-white transition-all duration-300 backdrop-blur-md hover:scale-105"
+												aria-label="Instagram"
+											>
+												<svg className="w-5 h-5 fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+													<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+													<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+													<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+												</svg>
+											</a>
+											<a
+												href="https://www.tiktok.com/@new.life.centro.m?is_from_webapp=1&sender_device=pc"
+												target="_blank"
+												rel="noopener noreferrer"
+												className="w-10 h-10 rounded-full bg-black/65 hover:bg-[#05835d] border border-white/20 flex items-center justify-center text-white transition-all duration-300 backdrop-blur-md hover:scale-105"
+												aria-label="TikTok"
+											>
+												<svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+													<path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.86-.74-3.99-1.72-.08 2.54-.01 5.08-.07 7.62-.03 1.86-.47 3.75-1.58 5.21-1.39 1.89-3.79 3.01-6.14 2.91-2.99-.04-5.83-2.07-6.72-4.91-.98-3.04.14-6.61 2.76-8.23 1.41-.91 3.12-1.22 4.76-1.02.01 1.39-.02 2.77-.01 4.16-1.12-.22-2.38-.07-3.26.68-.86.72-1.14 1.95-.79 3 .35 1.16 1.58 1.97 2.79 1.87 1.25-.03 2.37-.99 2.59-2.22.13-1.63.04-3.27.06-4.91.01-4.08-.02-8.16.02-12.24z" />
+												</svg>
+											</a>
+										</div>
 									</div>
 								</div>
 
@@ -1491,7 +1546,7 @@ export default function Home() {
 										Es momento de optimizar tu vida
 									</h4>
 									<p className="text-lg sm:text-2xl lg:text-3xl font-serif text-[#D9D4CC] leading-relaxed max-w-3xl">
-										Somos un centro médico de medicina integrativa y ortomolecular. Nos especializamos en tratar las enfermedades desde la molécula.
+										Somos un Centro Médico de Medicina Ortomolecular y Homeopática. Nos especializamos en tratar las enfermedades desde la célula.
 									</p>
 								</div>
 							</div>
@@ -1536,13 +1591,13 @@ export default function Home() {
 							</div>
 
 							{/* Consistent serif title */}
-							<h2 className="nosotros-reveal text-4xl sm:text-5xl lg:text-[54px] font-semibold tracking-tight text-[#054273] font-serif leading-[1.15] mb-10" style={{ opacity: 0 }}>
-								Medicina 100%<br />Integrativa y Natural
+							<h2 className="nosotros-reveal text-5xl sm:text-6xl lg:text-[68px] font-semibold tracking-tight text-[#054273] font-serif leading-[1.15] mb-10" style={{ opacity: 0 }}>
+								Medicina 100%<br />Natural
 							</h2>
 
 							{/* Monospace Subtitle */}
 							<span className="nosotros-reveal text-[10px] font-bold tracking-[0.25em] text-[#05835d] uppercase font-mono mb-2" style={{ opacity: 0 }}>
-								RESTAURACIÓN MOLECULAR Y NATURAL
+								Restauración celular
 							</span>
 
 							{/* Dotted separator line */}
@@ -1551,11 +1606,8 @@ export default function Home() {
 							</div>
 
 							{/* Body Paragraphs in dark text */}
-							<p className="nosotros-reveal text-sm md:text-base text-[#1F384D]/90 leading-relaxed font-normal mb-5 max-w-xl" style={{ opacity: 0 }}>
-								Todos nuestros tratamientos se basan en medicina integrativa y ortomolecular: tratamientos 100% biocompatibles que respetan el diseño original de tu cuerpo.
-							</p>
 							<p className="nosotros-reveal text-sm md:text-base text-[#1F384D]/90 leading-relaxed font-normal mb-8 max-w-xl" style={{ opacity: 0 }}>
-								Sin químicos sintéticos ni soluciones artificiales. Sin efectos secundarios agresivos, respaldado por profesionales de la salud.
+								Nos enfocamos en medicina integrativa y terapias alternativas, diseñadas para apoyar el equilibrio y bienestar de tu cuerpo de manera personalizada.
 							</p>
 
 							<div className="nosotros-cta mt-2" style={{ opacity: 0 }}>
@@ -1651,11 +1703,17 @@ export default function Home() {
 
 					<div className="max-w-7xl mx-auto w-full relative z-10 flex flex-col items-center">
 						{/* Row 1: 3 columns */}
+						<div className="flex items-center justify-center z-20 pointer-events-none pt-8 pb-8 flex-shrink-0">
+							<h2 className="enfermedades-2-reveal text-4xl sm:text-5xl lg:text-[64px] font-semibold tracking-tight text-[#054273] font-serif text-center px-4 py-12" style={{ opacity: 0 }}>
+								Enfermedades que tratamos
+							</h2>
+						</div>
+
 						<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full mb-12 auto-rows-fr auto-cols-fr">
 							{/* Card 1: Diábetes */}
 							<div className="list-card h-full group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
 								{/* Icon */}
-								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/8 rounded-2xl p-6 min-h-[220px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/8 rounded-2xl p-6 min-h-[160px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
 									<div className="mb-4 w-10 h-10 flex items-center justify-center text-[#05835d] group-hover:scale-110 transition-transform duration-300">
 										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
 											<path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 12 2 12 2C12 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
@@ -1667,18 +1725,13 @@ export default function Home() {
 									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">
 										Diábetes
 									</h3>
-									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Diábetes Mellitus Tipo 2</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Síndrome metabólico</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Reducción y control de peso</li>
-									</ul>
 								</div>
 							</div>
 
 							{/* Card 2: Hígado Graso */}
 							<div className="list-card h-full group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
 								{/* Icon */}
-								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/8 rounded-2xl p-6 min-h-[220px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/8 rounded-2xl p-6 min-h-[160px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
 									<div className="mb-4 w-10 h-10 flex items-center justify-center text-[#05835d] group-hover:scale-110 transition-transform duration-300">
 										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
 											<path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
@@ -1689,18 +1742,13 @@ export default function Home() {
 									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">
 										Hígado Graso
 									</h3>
-									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Hígado graso</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Enfermedades del sistema digestivo</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Inflamación</li>
-									</ul>
 								</div>
 							</div>
 
 							{/* Card 3: Hipotiroidismo */}
 							<div className="list-card h-full group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
 								{/* Icon */}
-								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/8 rounded-2xl p-6 min-h-[220px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/8 rounded-2xl p-6 min-h-[160px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
 									<div className="mb-4 w-10 h-10 flex items-center justify-center text-[#05835d] group-hover:scale-110 transition-transform duration-300">
 										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
 											<path d="M12 5C11 3.5 8 2 6 2C3 2 2 4 2 7C2 12 7 15 12 21C17 15 22 12 22 7C22 4 21 2 18 2C16 2 13 3.5 12 5Z" />
@@ -1712,46 +1760,29 @@ export default function Home() {
 									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">
 										Hipo e Hipertiroidismo
 									</h3>
-									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Hipo e hipertiroidismo</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />HPB, Prostatitis</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Disfunción eréctil</li>
-										{/* <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Menopausia y bajo libido</li> */}
-									</ul>
 								</div>
 							</div>
 						</div>
 
-						{/* Row 2: 2 centered columns */}
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mx-auto mb-16 auto-rows-fr">
+						{/* Row 2: 3 columns */}
+						<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full mb-16 auto-rows-fr">
 							{/* Card 4: Dolor Articulaciones */}
 							<div className="list-card group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
-								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/5 rounded-3xl p-6 min-h-[220px] flex flex-col justify-start items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
-									<div className="mb-4 w-12 h-12 flex items-center justify-center text-[#05835d]">
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/5 rounded-2xl p-6 min-h-[160px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+									<div className="mb-4 w-10 h-10 flex items-center justify-center text-[#05835d] group-hover:scale-110 transition-transform duration-300">
 										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
 											<circle cx="12" cy="12" r="3" />
-											<path d="M12 2v7" />
-											<path d="M12 15v7" />
-											<path d="M2 12h7" />
-											<path d="M15 12h7" />
-											<path d="M19 5l-5 5" />
-											<path d="M10 14l-5 5" />
+											<path d="M12 2v7M12 15v7M2 12h7M15 12h7M19 5l-5 5M10 14l-5 5" />
 										</svg>
 									</div>
 									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">Dolor en Articulaciones</h3>
-									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Artritis</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Artrosis</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Dolores articulares</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Fibromialgia</li>
-									</ul>
 								</div>
 							</div>
 
 							{/* Card 5: Respiratorias */}
 							<div className="list-card group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
-								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/5 rounded-3xl p-6 min-h-[220px] flex flex-col justify-start items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
-									<div className="mb-4 w-12 h-12 flex items-center justify-center text-[#05835d]">
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/5 rounded-2xl p-6 min-h-[160px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+									<div className="mb-4 w-10 h-10 flex items-center justify-center text-[#05835d] group-hover:scale-110 transition-transform duration-300">
 										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
 											<path d="M12 2v7" />
 											<path d="M12 9a4 4 0 0 0-4-4c-2.5 0-5 2-5 5s2.5 6 5 6a4 4 0 0 0 4-4Z" />
@@ -1759,13 +1790,20 @@ export default function Home() {
 											<path d="M9 18c0 2 1.5 3 3 3s3-1 3-3" />
 										</svg>
 									</div>
-									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">Respiratorias y Piel</h3>
-									<ul className="text-[#1F384D]/90 text-xs leading-relaxed space-y-2 font-normal">
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Asma</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Rinitis</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Sinusitis</li>
-										<li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#05835d] flex-shrink-0" />Enfermedades en la piel</li>
-									</ul>
+									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">Respiratorias</h3>
+								</div>
+							</div>
+
+							{/* Card 6: Enfermedades de la piel */}
+							<div className="list-card group flex flex-col items-center text-center hover:-translate-y-2" style={{ opacity: 0 }}>
+								<div className="w-full bg-[#F5F0E5]/50 backdrop-blur-sm border border-[#054273]/5 rounded-2xl p-6 min-h-[160px] flex flex-col justify-center items-center shadow-sm group-hover:shadow-md group-hover:bg-[#F5F0E5] transition-all duration-300">
+									<div className="mb-4 w-10 h-10 flex items-center justify-center text-[#05835d] group-hover:scale-110 transition-transform duration-300">
+										<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+											<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+											<path d="M8 11h8M12 7v8" />
+										</svg>
+									</div>
+									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">Enfermedades de la piel</h3>
 								</div>
 							</div>
 						</div>
@@ -1785,10 +1823,10 @@ export default function Home() {
 						<div className="text-center max-w-3xl mx-auto mb-16">
 							<h2 className="planes-reveal text-xs font-semibold uppercase tracking-[0.25em] text-[#05835d] mb-4" style={{ opacity: 0 }}>Planes Clínicos Específicos</h2>
 							<h3 className="planes-reveal text-4xl sm:text-5xl font-semibold tracking-tight text-[#054273] font-serif mb-6" style={{ opacity: 0 }}>
-								Planes de Salud Celular Específicos
+								Planes de Salud Celular Integrales
 							</h3>
 							<p className="planes-reveal text-base text-[#1F384D] opacity-90 leading-relaxed" style={{ opacity: 0 }}>
-								Programas médicos de un mes (o más) diseñados meticulosamente con exámenes diagnósticos de laboratorio, consultas, desintoxicación celular y sueroterapias específicas.
+								Programas médicos diseñados meticulosamente con exámenes diagnósticos de laboratorio, consultas, desintoxicación celular y sueroterapias específicas.
 							</p>
 						</div>
 
@@ -1821,9 +1859,6 @@ export default function Home() {
 								<div>
 									<div className="flex items-start justify-between flex-wrap gap-4 mb-6">
 										<div>
-											<span className="inline-block px-3 py-1 rounded-full bg-[#05835d]/10 text-[#05835d] text-[10px] font-bold uppercase tracking-wider mb-2">
-												Plan Clínico Stándard
-											</span>
 											<h4 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#054273] font-serif">
 												{activePlan.name}
 											</h4>
@@ -1867,7 +1902,7 @@ export default function Home() {
 												<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
 													<polyline points="20 6 9 17 4 12"></polyline>
 												</svg>
-												<span>{activePlan.medicacion}</span>
+												<span>Medicación Oral</span>
 											</div>
 										</div>
 									</div>
@@ -1875,7 +1910,7 @@ export default function Home() {
 									{/* Exámenes de laboratorio list */}
 									<div>
 										<h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#054273] mb-3">
-											Batería de Exámenes de Laboratorio Clínico Incluidos:
+											Paquete de Exámenes de Laboratorio Clínico Incluidos:
 										</h5>
 										<div className="flex flex-wrap gap-1.5">
 											{activePlan.examenes.map((ex, idx) => (
@@ -1893,7 +1928,7 @@ export default function Home() {
 								{/* Booking CTA button */}
 								<div className="mt-8 pt-6 border-t border-[#054273]/10 flex items-center justify-between flex-wrap gap-4">
 									<span className="text-xs text-[#1F384D]/75 font-semibold">
-										* Todos los exámenes y terapias se realizan en nuestras instalaciones.
+										* Todos los tratamientos se realizan en nuestras instalaciones.
 									</span>
 									<a
 										href={`https://wa.me/50498580298?text=${encodeURIComponent(`Hola! Me interesa agendar una cita para el plan de salud: ${activePlan.name} (${activePlan.subtitle}).`)}`}
@@ -1958,7 +1993,7 @@ export default function Home() {
 							<div className="lg:col-span-5">
 								<h2 className="contacto-reveal text-xs font-semibold uppercase tracking-[0.25em] text-[#05835d] mb-4" style={{ opacity: 0 }}>Agenda una cita</h2>
 								<h3 className="contacto-reveal text-4xl sm:text-5xl font-semibold tracking-tight text-[#054273] font-serif mb-6 leading-tight" style={{ opacity: 0 }}>
-									Comienza Tu Transformación
+									Comienza tu transformación
 								</h3>
 								<p className="contacto-reveal text-sm text-[#1F384D] opacity-90 leading-relaxed mb-8" style={{ opacity: 0 }}>
 									Visítanos en nuestras clínicas para una evaluación integral. Puedes agendar completando el formulario de contacto o llamando directamente a nuestros teléfonos oficiales.
@@ -2005,8 +2040,6 @@ export default function Home() {
 												<a href="tel:98580298" className="hover:text-[#05835d] transition-colors">9858-0298</a>
 												<span className="opacity-30">|</span>
 												<a href="tel:22223749" className="hover:text-[#05835d] transition-colors">2222-3749</a>
-												<span className="opacity-30">|</span>
-												<a href="tel:22023908" className="hover:text-[#05835d] transition-colors">2202-3908</a>
 											</div>
 										</div>
 									</div>
@@ -2034,16 +2067,16 @@ export default function Home() {
 										Horario de Atención
 									</span>
 									<p className="text-xs text-[#1F384D] leading-relaxed">
-										Lunes a Viernes: 8:00 AM - 5:00 PM
+										Lunes a Viernes: 8:00 A.M. - 4:00 P.M.
 										<br />
-										Sábados: 8:00 AM - 12:00 PM
+										Sábados: 8:00 A.M. - 12:00 P.M.
 									</p>
 								</div>
 							</div>
 
 							{/* Right: Contact Form */}
 							<div className="contacto-form-container lg:col-span-7 lg:pl-16" style={{ opacity: 0 }}>
-								<h4 className="text-xl sm:text-2xl font-semibold text-[#054273] font-serif mb-8">Formulario de Consulta e Inscripción</h4>
+								<h4 className="text-xl sm:text-2xl font-semibold text-[#054273] font-serif mb-8">Formulario de consulta e inscripción</h4>
 
 								{submitted ? (
 									<div className="py-16 text-center bg-white/40 border border-[#054273]/10 rounded-2xl p-8">
@@ -2176,6 +2209,43 @@ export default function Home() {
 								height={48}
 								className="h-10 w-auto object-contain brightness-0 invert opacity-90 mb-3"
 							/>
+							<div className="flex gap-3 mb-4">
+								<a
+									href="https://www.facebook.com/NewLifeCMO?locale=es_LA"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#05835d] flex items-center justify-center text-[#D9D4CC] transition-all duration-300 hover:scale-105"
+									aria-label="Facebook"
+								>
+									<svg className="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24">
+										<path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
+									</svg>
+								</a>
+								<a
+									href="https://www.instagram.com/newlifecmoterapiasalternativas/?utm_source=ig_web_button_share_sheet"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#05835d] flex items-center justify-center text-[#D9D4CC] transition-all duration-300 hover:scale-105"
+									aria-label="Instagram"
+								>
+									<svg className="w-4.5 h-4.5 fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+										<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+										<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+										<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+									</svg>
+								</a>
+								<a
+									href="https://www.tiktok.com/@new.life.centro.m?is_from_webapp=1&sender_device=pc"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#05835d] flex items-center justify-center text-[#D9D4CC] transition-all duration-300 hover:scale-105"
+									aria-label="TikTok"
+								>
+									<svg className="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24">
+										<path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.86-.74-3.99-1.72-.08 2.54-.01 5.08-.07 7.62-.03 1.86-.47 3.75-1.58 5.21-1.39 1.89-3.79 3.01-6.14 2.91-2.99-.04-5.83-2.07-6.72-4.91-.98-3.04.14-6.61 2.76-8.23 1.41-.91 3.12-1.22 4.76-1.02.01 1.39-.02 2.77-.01 4.16-1.12-.22-2.38-.07-3.26.68-.86.72-1.14 1.95-.79 3 .35 1.16 1.58 1.97 2.79 1.87 1.25-.03 2.37-.99 2.59-2.22.13-1.63.04-3.27.06-4.91.01-4.08-.02-8.16.02-12.24z" />
+									</svg>
+								</a>
+							</div>
 							<p className="text-[11px] text-[#D9D4CC]/60 max-w-sm text-center md:text-left leading-relaxed">
 								New Life Centro Médico de Medicina Integrativa y Terapias Alternativas. Restaurando el equilibrio biochemical desde la célula. Tegucigalpa, Honduras.
 							</p>
@@ -2184,8 +2254,8 @@ export default function Home() {
 						<div className="flex flex-col items-center md:items-end gap-3 text-xs font-semibold tracking-wider uppercase">
 							<div className="flex gap-8">
 								<a href="#nosotros" className="hover:text-[#05835d] transition-colors">Nosotros</a>
-								<a href="#tratamientos" className="hover:text-[#05835d] transition-colors">Tratamientos</a>
-								<a href="#planes" className="hover:text-[#05835d] transition-colors">Planes</a>
+								<a href="#tratamientos" className="hover:text-[#05835d] transition-colors">Terapias Alternativas</a>
+								<a href="#planes" className="hover:text-[#05835d] transition-colors">Planes de salud integral</a>
 								<a href="#contacto" className="hover:text-[#05835d] transition-colors">Contacto</a>
 							</div>
 							<span className="text-[10px] text-[#D9D4CC]/40 tracking-normal font-normal">
