@@ -234,13 +234,89 @@ const PLANS_DATA: Plan[] = [
 	}
 ];
 
+interface Terapia {
+	id: string;
+	name: string;
+	medicamento: string;
+	sesiones: number;
+	duracionFrecuencia: string;
+}
+
+const TERAPIAS_DATA: Terapia[] = [
+	{
+		id: "acupuntura",
+		name: "Acupuntura + Electroterapia",
+		medicamento: "Traumeel tabs + CBD Cream",
+		sesiones: 6,
+		duracionFrecuencia: "30 minutos, 3 veces a la semana"
+	},
+	{
+		id: "autohemoterapia",
+		name: "Autohemoterapia menor",
+		medicamento: "Ninguno",
+		sesiones: 4,
+		duracionFrecuencia: "30 minutos, cada 5 días"
+	},
+	{
+		id: "desintoxicacion",
+		name: "Desintoxicación Iónica",
+		medicamento: "Body Detox",
+		sesiones: 6,
+		duracionFrecuencia: "40 minutos, 3 veces a la semana"
+	},
+	{
+		id: "prp-patelar",
+		name: "Plasma Rico en Plaquetas para dolor patelar en rodilla (1 rodilla)",
+		medicamento: "Osteocartil para rodillas",
+		sesiones: 4,
+		duracionFrecuencia: "1 1/2 hora, frecuencia a criterio médico"
+	},
+	{
+		id: "prp-alopecia",
+		name: "Plasma Rico en Plaquetas para alopecia y caída de cabello",
+		medicamento: "Biotina + AH + CH + Vit. C",
+		sesiones: 4,
+		duracionFrecuencia: "1 1/2 hora, frecuencia a criterio médico"
+	},
+	{
+		id: "presoterapia",
+		name: "Presoterapia",
+		medicamento: "Circu-Act + varicream",
+		sesiones: 6,
+		duracionFrecuencia: "40 minutos, 3 veces a la semana"
+	},
+	{
+		id: "cupping",
+		name: "Terapia de Cupping (Ventosas)",
+		medicamento: "Traumeel tabs + CBD Cream",
+		sesiones: 4,
+		duracionFrecuencia: "30 minutos, 1 semanal x 1 mes"
+	},
+	{
+		id: "neural",
+		name: "Terapia Neural",
+		medicamento: "4 inyecciones de Neurobion 50000 IM + Traumeel tabs",
+		sesiones: 4,
+		duracionFrecuencia: "30 minutos, frecuencia a criterio médico"
+	},
+	{
+		id: "antiestres",
+		name: "Terapia Antiestrés",
+		medicamento: "4 inyecciones de Neurobion 50000 IM + Nervoheel tabs",
+		sesiones: 4,
+		duracionFrecuencia: "1 hora, 1 semanal x 1 mes"
+	}
+];
+
 const VALORES = ["Fe", "Responsabilidad", "Confiabilidad", "Credibilidad", "Integridad", "Honestidad", "Trato humano", "Honradez", "Respeto", "Sinceridad"];
 
 export default function Home() {
 	const [selectedPlanIndex, setSelectedPlanIndex] = useState<number>(0);
+	const [selectedTerapiaIndex, setSelectedTerapiaIndex] = useState<number>(0);
 	const [formState, setFormState] = useState({ name: "", phone: "", email: "", plan: "diabetcare", message: "" });
 	const [submitted, setSubmitted] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const [lightboxOpen, setLightboxOpen] = useState(false);
 	const [navScrolled, setNavScrolled] = useState(false);
 
 	// Scroll listener to toggle navbar transparency
@@ -1135,6 +1211,86 @@ export default function Home() {
 				}
 			);
 
+			// 3b. Terapias Section
+			gsap.fromTo("#terapias .terapias-reveal",
+				{ opacity: 0, y: 30 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.8,
+					ease: "power3.out",
+					stagger: 0.12,
+					scrollTrigger: {
+						trigger: "#terapias",
+						start: "top 75%",
+						toggleActions: "play none none none"
+					}
+				}
+			);
+
+			gsap.fromTo("#terapias .terapias-tabs",
+				{ opacity: 0, x: -30 },
+				{
+					opacity: 1,
+					x: 0,
+					duration: 0.8,
+					ease: "power2.out",
+					scrollTrigger: {
+						trigger: "#terapias .terapias-tabs",
+						start: "top 80%",
+						toggleActions: "play none none none"
+					}
+				}
+			);
+
+			gsap.fromTo("#terapias .terapias-content",
+				{ opacity: 0, x: 30 },
+				{
+					opacity: 1,
+					x: 0,
+					duration: 0.8,
+					ease: "power2.out",
+					scrollTrigger: {
+						trigger: "#terapias .terapias-content",
+						start: "top 80%",
+						toggleActions: "play none none none"
+					}
+				}
+			);
+
+			// 3c. Team Section
+			gsap.fromTo("#team .team-reveal",
+				{ opacity: 0, y: 30 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.8,
+					ease: "power3.out",
+					stagger: 0.12,
+					scrollTrigger: {
+						trigger: "#team",
+						start: "top 75%",
+						toggleActions: "play none none none"
+					}
+				}
+			);
+
+			gsap.fromTo("#team .team-card",
+				{ opacity: 0, y: 40 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.8,
+					ease: "power2.out",
+					stagger: 0.15,
+					scrollTrigger: {
+						trigger: "#team",
+						start: "top 75%",
+						toggleActions: "play none none none"
+					}
+				}
+			);
+
 			// Call to action Section
 			gsap.fromTo("#cta-orientacion .cta-reveal",
 				{ opacity: 0, y: 30 },
@@ -1233,6 +1389,7 @@ export default function Home() {
 	};
 
 	const activePlan = PLANS_DATA[selectedPlanIndex];
+	const activeTerapia = TERAPIAS_DATA[selectedTerapiaIndex];
 
 	return (
 		<div id="smooth-wrapper" ref={containerRef}>
@@ -1263,7 +1420,7 @@ export default function Home() {
 					<a href="#nosotros" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Nosotros
 					</a>
-					<a href="#tratamientos" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
+					<a href="#terapias" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
 						<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58]"></span> Terapias Alternativas
 					</a>
 					<a href="#planes" className={`transition-colors flex items-center gap-2 ${navScrolled ? "hover:text-[#05835d]" : "hover:text-[#c1aa58]"}`}>
@@ -1332,7 +1489,7 @@ export default function Home() {
 						Nosotros
 					</a>
 					<a
-						href="#tratamientos"
+						href="#terapias"
 						onClick={() => setMobileMenuOpen(false)}
 						className="mobile-menu-item text-4xl font-serif font-black tracking-tight uppercase text-[#054273] hover:text-[#05835d] transition-colors duration-300"
 					>
@@ -1817,6 +1974,114 @@ export default function Home() {
 					</div>
 				</section>
 
+
+				{/* Section: Terapias Alternativas (Interactive Dashboard) */}
+				<section id="terapias" className="py-24 px-6 md:px-12 bg-[#FCFAF7] border-t border-[#054273]/10 relative">
+					<div className="max-w-7xl mx-auto">
+						<div className="text-center max-w-3xl mx-auto mb-16">
+							<h2 className="terapias-reveal text-xs font-semibold uppercase tracking-[0.25em] text-[#05835d] mb-4" style={{ opacity: 0 }}>Terapias Alternativas Especializadas</h2>
+							<h3 className="terapias-reveal text-4xl sm:text-5xl font-semibold tracking-tight text-[#054273] font-serif mb-6" style={{ opacity: 0 }}>
+								Terapias Alternativas y Complementarias
+							</h3>
+							<p className="terapias-reveal text-base text-[#1F384D] opacity-90 leading-relaxed" style={{ opacity: 0 }}>
+								Ofrecemos procedimientos diseñados meticulosamente para estimular la autocuración, aliviar el dolor, mejorar la circulación y regenerar tejidos desde la raíz biológica.
+							</p>
+						</div>
+
+						{/* Interactive plan board wrapper */}
+						<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+							{/* Left: Tab selection list */}
+							<div className="terapias-tabs lg:col-span-4 max-h-[550px] overflow-y-auto border border-[#054273]/10 rounded-2xl bg-[#E5E1D8]/45 p-4 pr-2 scrollbar-thin scrollbar-thumb-[#054273]/20" style={{ opacity: 0 }}>
+								<span className="text-[10px] font-bold uppercase tracking-wider text-[#054273]/70 px-2 pb-2 block border-b border-[#054273]/5">
+									Seleccione una terapia
+								</span>
+								<div className="flex flex-col gap-1 mt-2">
+									{TERAPIAS_DATA.map((terapia, idx) => (
+										<button
+											key={terapia.id}
+											onClick={() => setSelectedTerapiaIndex(idx)}
+											className={`text-left px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer flex items-center justify-between text-xs font-semibold tracking-wide uppercase ${selectedTerapiaIndex === idx
+												? "bg-[#054273] text-[#D9D4CC] shadow-md"
+												: "hover:bg-white/50 text-[#1F384D]"
+												}`}
+										>
+											<span className="pr-2">{terapia.name}</span>
+											{selectedTerapiaIndex === idx && <span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58] shrink-0"></span>}
+										</button>
+									))}
+								</div>
+							</div>
+
+							{/* Right: Selected Terapia details card */}
+							<div className="terapias-content lg:col-span-8 bg-white/60 border border-[#054273]/10 rounded-2xl p-8 shadow-md relative min-h-[400px] flex flex-col justify-between" style={{ opacity: 0 }}>
+								<div>
+									<div className="flex items-start justify-between flex-wrap gap-4 mb-6">
+										<div>
+											<h4 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#054273] font-serif">
+												{activeTerapia.name}
+											</h4>
+										</div>
+										<div className="text-[#c1aa58] text-2xl font-bold select-none">*</div>
+									</div>
+
+									{/* Terapia Components info */}
+									<div className="mb-8 border-t border-b border-[#054273]/10 py-6">
+										<h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#054273] mb-4">
+											Detalles de la Terapia
+										</h5>
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-medium text-[#1F384D]/90">
+											<div className="flex flex-col gap-1.5">
+												<span className="text-[10px] uppercase tracking-wider text-[#05835d]">Medicamento de Soporte</span>
+												<div className="flex items-start gap-2.5">
+													<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+														<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+													</svg>
+													<span className="font-semibold text-sm">{activeTerapia.medicamento}</span>
+												</div>
+											</div>
+											<div className="flex flex-col gap-1.5">
+												<span className="text-[10px] uppercase tracking-wider text-[#05835d]">Número de Sesiones Recomendadas</span>
+												<div className="flex items-start gap-2.5">
+													<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+														<path d="M9 11l3 3L22 4"></path>
+														<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+													</svg>
+													<span className="font-semibold text-sm">{activeTerapia.sesiones} {activeTerapia.sesiones === 1 ? 'sesión' : 'sesiones'}</span>
+												</div>
+											</div>
+											<div className="flex flex-col gap-1.5 md:col-span-2">
+												<span className="text-[10px] uppercase tracking-wider text-[#05835d]">Duración por Sesión / Frecuencia</span>
+												<div className="flex items-start gap-2.5">
+													<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+														<circle cx="12" cy="12" r="10"></circle>
+														<polyline points="12 6 12 12 16 14"></polyline>
+													</svg>
+													<span className="font-semibold text-sm">{activeTerapia.duracionFrecuencia}</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								{/* Booking CTA button */}
+								<div className="mt-8 pt-6 border-t border-[#054273]/10 flex items-center justify-between flex-wrap gap-4">
+									<span className="text-xs text-[#1F384D]/75 font-semibold">
+										* Todos los tratamientos se realizan bajo estricta supervisión médica en nuestras instalaciones.
+									</span>
+									<a
+										href={`https://wa.me/50498580298?text=${encodeURIComponent(`Hola! Me interesa agendar una cita para la terapia: ${activeTerapia.name}.`)}`}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="px-6 py-2.5 rounded-full bg-[#05835d] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#054273] transition-colors shadow-sm cursor-pointer"
+									>
+										Solicitar Terapia {activeTerapia.name}
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
 				{/* Section: Planes de Salud (Interactive Dashboard) */}
 				<section id="planes" className="py-24 px-6 md:px-12 bg-[#FAF7F0] border-t border-b border-[#054273]/10 relative">
 					<div className="max-w-7xl mx-auto">
@@ -1945,6 +2210,82 @@ export default function Home() {
 					</div>
 				</section>
 
+				{/* Section: Nuestro Equipo */}
+				<section id="team" className="py-24 px-6 md:px-12 bg-[#FAF7F0] border-t border-b border-[#054273]/10 relative">
+					<div className="max-w-7xl mx-auto">
+						<div className="text-center max-w-3xl mx-auto mb-16">
+							<h2 className="team-reveal text-xs font-semibold uppercase tracking-[0.25em] text-[#05835d] mb-4" style={{ opacity: 0 }}>Especialistas en Salud</h2>
+							<h3 className="team-reveal text-4xl sm:text-5xl font-semibold tracking-tight text-[#054273] font-serif mb-6" style={{ opacity: 0 }}>
+								Nuestro Equipo Médico
+							</h3>
+							<p className="team-reveal text-base text-[#1F384D] opacity-90 leading-relaxed" style={{ opacity: 0 }}>
+								Contamos con profesionales altamente capacitados y comprometidos en brindarte un tratamiento integral y personalizado para restaurar tu salud.
+							</p>
+						</div>
+
+						{/* Grid of Team Members */}
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
+							{/* Member 1 */}
+							<div className="team-card flex flex-col items-center text-center group" style={{ opacity: 0 }}>
+								<div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden border border-[#054273]/10 shadow-md bg-[#E5E1D8]/20 transition-all duration-500 hover:shadow-lg">
+									<Image
+										src="/images/team/team1.jpeg"
+										alt="Dra. Norma Godoy"
+										fill
+										className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+										sizes="(max-width: 768px) 100vw, 33vw"
+									/>
+								</div>
+								<h4 className="text-2xl font-serif font-semibold text-[#054273] mt-6 mb-1.5">
+									Dra. Norma Godoy
+								</h4>
+								<span className="text-xs font-semibold text-[#05835d] uppercase tracking-wider">
+									Médico General e Integrativo
+								</span>
+							</div>
+
+							{/* Member 2 */}
+							<div className="team-card flex flex-col items-center text-center group" style={{ opacity: 0 }}>
+								<div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden border border-[#054273]/10 shadow-md bg-[#E5E1D8]/20 transition-all duration-500 hover:shadow-lg">
+									<Image
+										src="/images/team/team2.jpeg"
+										alt="Mayela Rodríguez"
+										fill
+										className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+										sizes="(max-width: 768px) 100vw, 33vw"
+									/>
+								</div>
+								<h4 className="text-2xl font-serif font-semibold text-[#054273] mt-6 mb-1.5">
+									Mayela Rodríguez
+								</h4>
+								<span className="text-xs font-semibold text-[#05835d] uppercase tracking-wider max-w-[280px]">
+									Terapeuta en Medicina Integrativa y Terapias Alternativas
+								</span>
+							</div>
+
+							{/* Member 3 */}
+							<div className="team-card flex flex-col items-center text-center group" style={{ opacity: 0 }}>
+								<div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden border border-[#054273]/10 shadow-md bg-[#E5E1D8]/20 transition-all duration-500 hover:shadow-lg">
+									<Image
+										src="/images/team/team3.jpeg"
+										alt="Jessica Mineros"
+										fill
+										className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+										sizes="(max-width: 768px) 100vw, 33vw"
+									/>
+								</div>
+								<h4 className="text-2xl font-serif font-semibold text-[#054273] mt-6 mb-1.5">
+									Jessica Mineros
+								</h4>
+								<span className="text-xs font-semibold text-[#05835d] uppercase tracking-wider">
+									Enfermera
+								</span>
+							</div>
+						</div>
+					</div>
+				</section>
+
+
 				{/* Section: Call to action */}
 				<section id="cta-orientacion" className="py-20 px-6 md:px-12 bg-[#054273] text-[#FAF7F0] relative overflow-hidden border-b border-[#FAF7F0]/10">
 					{/* Background decorative elements */}
@@ -1998,6 +2339,31 @@ export default function Home() {
 								<p className="contacto-reveal text-sm text-[#1F384D] opacity-90 leading-relaxed mb-8" style={{ opacity: 0 }}>
 									Visítanos en nuestras clínicas para una evaluación integral. Puedes agendar completando el formulario de contacto o llamando directamente a nuestros teléfonos oficiales.
 								</p>
+
+								{/* Edificio Image */}
+								<div 
+									className="contacto-reveal mb-8 overflow-hidden rounded-2xl border border-[#054273]/15 shadow-md relative h-96 w-full cursor-pointer group/img" 
+									style={{ opacity: 0 }}
+									onClick={() => setLightboxOpen(true)}
+								>
+									<Image
+										src="/images/edificio.jpg"
+										alt="Edificio Clínicas San Francisco"
+										fill
+										className="object-cover object-center transition-transform duration-700 group-hover/img:scale-105"
+										sizes="(max-width: 768px) 100vw, 30vw"
+									/>
+									<div className="absolute inset-0 bg-black/25 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+										<div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white scale-90 group-hover/img:scale-100 transition-all duration-300">
+											<svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+												<circle cx="11" cy="11" r="8"></circle>
+												<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+												<line x1="11" y1="8" x2="11" y2="14"></line>
+												<line x1="8" y1="11" x2="14" y2="11"></line>
+											</svg>
+										</div>
+									</div>
+								</div>
 
 								{/* Info Blocks */}
 								<div className="flex flex-col gap-6 mb-8">
@@ -2153,11 +2519,20 @@ export default function Home() {
 															onChange={handlePlanChange}
 															className="w-full bg-transparent text-base sm:text-lg font-semibold text-[#054273] focus:outline-none py-1.5 cursor-pointer appearance-none pr-8"
 														>
-															{PLANS_DATA.map(plan => (
-																<option key={plan.id} value={plan.id} className="bg-[#FAF7F0] text-[#054273]">
-																	{plan.name}
-																</option>
-															))}
+															<optgroup label="Planes de Salud" className="bg-[#FAF7F0] text-[#054273] font-bold">
+																{PLANS_DATA.map(plan => (
+																	<option key={plan.id} value={plan.id} className="bg-[#FAF7F0] text-[#054273] font-normal">
+																		{plan.name}
+																	</option>
+																))}
+															</optgroup>
+															<optgroup label="Terapias Alternativas" className="bg-[#FAF7F0] text-[#054273] font-bold">
+																{TERAPIAS_DATA.map(terapia => (
+																	<option key={terapia.id} value={terapia.id} className="bg-[#FAF7F0] text-[#054273] font-normal">
+																		{terapia.name}
+																	</option>
+																))}
+															</optgroup>
 														</select>
 														<span className="absolute right-0 pointer-events-none text-[#054273] text-lg font-bold">+</span>
 													</div>
@@ -2254,7 +2629,7 @@ export default function Home() {
 						<div className="flex flex-col items-center md:items-end gap-3 text-xs font-semibold tracking-wider uppercase">
 							<div className="flex gap-8">
 								<a href="#nosotros" className="hover:text-[#05835d] transition-colors">Nosotros</a>
-								<a href="#tratamientos" className="hover:text-[#05835d] transition-colors">Terapias Alternativas</a>
+								<a href="#terapias" className="hover:text-[#05835d] transition-colors">Terapias Alternativas</a>
 								<a href="#planes" className="hover:text-[#05835d] transition-colors">Planes de salud integral</a>
 								<a href="#contacto" className="hover:text-[#05835d] transition-colors">Contacto</a>
 							</div>
@@ -2265,6 +2640,40 @@ export default function Home() {
 					</div>
 				</footer>
 			</div>
+
+			{/* Lightbox Modal */}
+			{lightboxOpen && (
+				<div 
+					className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out animate-fade-in"
+					onClick={() => setLightboxOpen(false)}
+				>
+					{/* Close Button */}
+					<button 
+						className="absolute top-6 right-6 text-white hover:text-gray-300 text-3xl font-light focus:outline-none cursor-pointer w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all z-10"
+						onClick={(e) => { e.stopPropagation(); setLightboxOpen(false); }}
+						aria-label="Close Lightbox"
+					>
+						&times;
+					</button>
+
+					{/* Lightbox Content Container */}
+					<div 
+						className="relative max-w-5xl max-h-[85vh] w-full h-full flex items-center justify-center"
+						onClick={(e) => e.stopPropagation()}
+					>
+						<div className="relative w-full h-full max-h-[85vh] aspect-[4/3] sm:aspect-auto">
+							<Image
+								src="/images/edificio.jpg"
+								alt="Edificio Clínicas San Francisco"
+								fill
+								className="object-contain rounded-lg"
+								sizes="90vw"
+								priority
+							/>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
