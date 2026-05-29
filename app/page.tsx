@@ -1879,7 +1879,7 @@ export default function Home() {
 											<path d="M12 11C14.5 13 14.5 17 12 19" />
 										</svg>
 									</div>
-									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">
+									<h3 className="text-[#054273] text-xl font-bold mb-3 uppercase tracking-tight">
 										Diábetes
 									</h3>
 								</div>
@@ -1896,7 +1896,7 @@ export default function Home() {
 											<circle cx="12" cy="12" r="2" />
 										</svg>
 									</div>
-									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">
+									<h3 className="text-[#054273] text-xl font-bold mb-3 uppercase tracking-tight">
 										Hígado Graso
 									</h3>
 								</div>
@@ -1914,7 +1914,7 @@ export default function Home() {
 											<path d="M17 9C15 10 14 12 17 15" />
 										</svg>
 									</div>
-									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">
+									<h3 className="text-[#054273] text-xl font-bold mb-3 uppercase tracking-tight">
 										Hipo e Hipertiroidismo
 									</h3>
 								</div>
@@ -1932,7 +1932,7 @@ export default function Home() {
 											<path d="M12 2v7M12 15v7M2 12h7M15 12h7M19 5l-5 5M10 14l-5 5" />
 										</svg>
 									</div>
-									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">Dolor en Articulaciones</h3>
+									<h3 className="text-[#054273] text-xl font-bold mb-3 uppercase tracking-tight">Dolor en Articulaciones</h3>
 								</div>
 							</div>
 
@@ -1947,7 +1947,7 @@ export default function Home() {
 											<path d="M9 18c0 2 1.5 3 3 3s3-1 3-3" />
 										</svg>
 									</div>
-									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">Respiratorias</h3>
+									<h3 className="text-[#054273] text-xl font-bold mb-3 uppercase tracking-tight">Enfermedades Respiratorias</h3>
 								</div>
 							</div>
 
@@ -1960,7 +1960,7 @@ export default function Home() {
 											<path d="M8 11h8M12 7v8" />
 										</svg>
 									</div>
-									<h3 className="text-[#054273] text-2xl font-bold mb-3 uppercase tracking-tight">Enfermedades de la piel</h3>
+									<h3 className="text-[#054273] text-xl font-bold mb-3 uppercase tracking-tight">Enfermedades de la piel</h3>
 								</div>
 							</div>
 						</div>
@@ -2341,8 +2341,8 @@ export default function Home() {
 								</p>
 
 								{/* Edificio Image */}
-								<div 
-									className="contacto-reveal mb-8 overflow-hidden rounded-2xl border border-[#054273]/15 shadow-md relative h-96 w-full cursor-pointer group/img" 
+								<div
+									className="contacto-reveal mb-8 overflow-hidden rounded-2xl border border-[#054273]/15 shadow-md relative h-96 w-full cursor-pointer group/img"
 									style={{ opacity: 0 }}
 									onClick={() => setLightboxOpen(true)}
 								>
@@ -2643,12 +2643,12 @@ export default function Home() {
 
 			{/* Lightbox Modal */}
 			{lightboxOpen && (
-				<div 
+				<div
 					className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out animate-fade-in"
 					onClick={() => setLightboxOpen(false)}
 				>
 					{/* Close Button */}
-					<button 
+					<button
 						className="absolute top-6 right-6 text-white hover:text-gray-300 text-3xl font-light focus:outline-none cursor-pointer w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all z-10"
 						onClick={(e) => { e.stopPropagation(); setLightboxOpen(false); }}
 						aria-label="Close Lightbox"
@@ -2657,7 +2657,7 @@ export default function Home() {
 					</button>
 
 					{/* Lightbox Content Container */}
-					<div 
+					<div
 						className="relative max-w-5xl max-h-[85vh] w-full h-full flex items-center justify-center"
 						onClick={(e) => e.stopPropagation()}
 					>
