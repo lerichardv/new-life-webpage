@@ -24,7 +24,7 @@ const PLANS_DATA: Plan[] = [
 		id: "diabetcare",
 		name: "DIABETCARE",
 		subtitle: "Tratamiento Integral de la Diabetes Mellitus Tipo 2",
-		description: "Diseñado para controlar la glucosa, reducir la resistencia a la insulina y restaurar el metabolismo celular desde la raíz.",
+		description: "Diseñado para controlar la glucosa, reducir la resistencia a la insulina y restaurar el metabolismo.",
 		consultas: "2 consultas médicas completas (evaluación inicial y control final)",
 		desintoxicacion: "Desintoxicación celular profunda oral o intravenosa (IV)",
 		sueroterapia: "4 sesiones de Sueroterapia Ortomolecular (1 sesión semanal durante 1 mes)",
@@ -99,7 +99,7 @@ const PLANS_DATA: Plan[] = [
 		id: "metabolic",
 		name: "METABOLIC",
 		subtitle: "Control y Regulación del Síndrome Metabólico",
-		description: "Combate la hipertensión, resistencia a la insulina y colesterol elevado para prevenir el riesgo cardiovascular.",
+		description: "Combate la resistencia a la insulina y regula el colesterol y triglicéridos para prevenir el riesgo cardiovascular.",
 		consultas: "2 consultas médicas completas (evaluación inicial y control final)",
 		desintoxicacion: "Desintoxicación celular profunda oral o intravenosa (IV)",
 		sueroterapia: "4 sesiones de Sueroterapia Ortomolecular (1 sesión semanal durante 1 mes)",
@@ -113,7 +113,7 @@ const PLANS_DATA: Plan[] = [
 		id: "respiratory",
 		name: "RESPIRATORY",
 		subtitle: "Inmunidad y Vías Respiratorias (Asma, Rinitis, Sinusitis)",
-		description: "Fortalece las defensas pulmonares, desinflama las mucosas del tracto respiratorio y reduce la hipersensibilidad alérgica.",
+		description: "Fortalece las defensas pulmonares, desinflama las mucosas de las vías respiratorias y reduce las alergias.",
 		consultas: "2 consultas médicas completas (evaluación inicial y control final)",
 		desintoxicacion: "Desintoxicación celular profunda oral o intravenosa (IV)",
 		sueroterapia: "4 sesiones de Sueroterapia Ortomolecular (1 sesión semanal durante 1 mes)",
@@ -126,8 +126,8 @@ const PLANS_DATA: Plan[] = [
 	{
 		id: "tyroid",
 		name: "TYROID",
-		subtitle: "Regulación de Tiroides (Hipo / Hipertiroidismo y Hashimoto)",
-		description: "Equilibra la producción hormonal y corrige síntomas como fatiga crónica, desajustes de peso y desequilibrio térmico.",
+		subtitle: "Regulación de Tiroides (Hipo / Hipertiroidismo)",
+		description: "Equilibra la producción hormonal y corrige síntomas como fatiga crónica, entre otros.",
 		consultas: "2 consultas médicas completas (evaluación inicial y control final)",
 		desintoxicacion: "Desintoxicación celular profunda oral o intravenosa (IV)",
 		sueroterapia: "4 sesiones de Sueroterapia Ortomolecular (1 sesión semanal durante 1 mes)",
@@ -182,7 +182,7 @@ const PLANS_DATA: Plan[] = [
 	{
 		id: "prostacare",
 		name: "PROSTACARE",
-		subtitle: "Salud Prostática y Vitalidad Masculina (HPB / Prostatitis)",
+		subtitle: "Salud Prostática y Vitalidad Masculina (HPB / Prostatitis / Disfunción Eréctil)",
 		description: "Tratamiento preventivo y complementario para reducir la inflamación prostática y optimizar el vigor general.",
 		consultas: "2 consultas médicas completas (evaluación inicial y control final)",
 		desintoxicacion: "Desintoxicación celular profunda oral o intravenosa (IV)",
@@ -196,8 +196,8 @@ const PLANS_DATA: Plan[] = [
 	{
 		id: "dermacare",
 		name: "DERMACARE",
-		subtitle: "Salud y Regeneración de la Piel (Dermatosis)",
-		description: "Combate enfermedades dermatológicas crónicas como psoriasis, dermatitis y eccemas actuando desde el interior celular.",
+		subtitle: "Salud y Regeneración de la Piel (Enfermedades de la piel)",
+		description: "Trata enfermedades dermatológicas crónicas como psoriasis, dermatitis, eccemas, vitiligo, entre otras.",
 		consultas: "2 consultas médicas completas (evaluación inicial y control final)",
 		desintoxicacion: "Desintoxicación celular profunda oral o intravenosa (IV)",
 		sueroterapia: "4 sesiones de Sueroterapia Ortomolecular (1 sesión semanal durante 1 mes)",
@@ -210,8 +210,8 @@ const PLANS_DATA: Plan[] = [
 	{
 		id: "weightcontrol",
 		name: "WEIGHT CONTROL",
-		subtitle: "Reducción de Peso y Control Metabólico",
-		description: "Protocolo metabólico acelerado que limpia tus filtros internos para facilitar la pérdida de grasa y aumentar la vitalidad.",
+		subtitle: "Control y Reducción de Peso",
+		description: "Protocolo que facilita la pérdida de grasa y aumenta la energía y el bienestar general.",
 		consultas: "2 consultas médicas completas (evaluación inicial y control final)",
 		desintoxicacion: "Desintoxicación celular profunda oral o intravenosa (IV)",
 		sueroterapia: "6 sesiones de Sueroterapia Ortomolecular (1 sesión semanal por 1 mes y medio)",
@@ -226,11 +226,11 @@ const PLANS_DATA: Plan[] = [
 		name: "PLAN ABIERTO",
 		subtitle: "Plan de Salud Abierto Personalizado",
 		description: "Un plan de salud diseñado a la medida para abordar patologías específicas no incluidas en los tratamientos estándares.",
-		consultas: "Consultas de valoración continua según evolución clínica",
-		desintoxicacion: "Desintoxicación celular profunda adaptada",
-		sueroterapia: "Sesiones de Sueroterapia Ortomolecular según requerimiento del paciente",
+		consultas: "2 consultas médicas",
+		desintoxicacion: "Desintoxicación celular profunda",
+		sueroterapia: "4 sesiones de sueroterapias ortomoleculares",
 		medicacion: "Tratamiento fitoterapéutico oral específico",
-		examenes: ["Exámenes de laboratorio clínicos específicos definidos por el médico especialista en la primera consulta"]
+		examenes: ["Exámenes de análisis clínicos de laboratorio definido"]
 	}
 ];
 
@@ -246,63 +246,63 @@ const TERAPIAS_DATA: Terapia[] = [
 	{
 		id: "acupuntura",
 		name: "Acupuntura + Electroterapia",
-		medicamento: "Traumeel tabs + CBD Cream",
+		medicamento: "Tratamiento Complementario",
 		sesiones: 6,
 		duracionFrecuencia: "30 minutos, 3 veces a la semana"
 	},
 	{
 		id: "autohemoterapia",
 		name: "Autohemoterapia menor",
-		medicamento: "Ninguno",
+		medicamento: "Tratamiento Complementario",
 		sesiones: 4,
 		duracionFrecuencia: "30 minutos, cada 5 días"
 	},
 	{
 		id: "desintoxicacion",
 		name: "Desintoxicación Iónica",
-		medicamento: "Body Detox",
+		medicamento: "Tratamiento Complementario",
 		sesiones: 6,
 		duracionFrecuencia: "40 minutos, 3 veces a la semana"
 	},
 	{
 		id: "prp-patelar",
 		name: "Plasma Rico en Plaquetas para dolor patelar en rodilla (1 rodilla)",
-		medicamento: "Osteocartil para rodillas",
+		medicamento: "Tratamiento Complementario",
 		sesiones: 4,
 		duracionFrecuencia: "1 1/2 hora, frecuencia a criterio médico"
 	},
 	{
 		id: "prp-alopecia",
 		name: "Plasma Rico en Plaquetas para alopecia y caída de cabello",
-		medicamento: "Biotina + AH + CH + Vit. C",
+		medicamento: "Tratamiento Complementario",
 		sesiones: 4,
 		duracionFrecuencia: "1 1/2 hora, frecuencia a criterio médico"
 	},
 	{
 		id: "presoterapia",
 		name: "Presoterapia",
-		medicamento: "Circu-Act + varicream",
+		medicamento: "Tratamiento Complementario",
 		sesiones: 6,
 		duracionFrecuencia: "40 minutos, 3 veces a la semana"
 	},
 	{
 		id: "cupping",
 		name: "Terapia de Cupping (Ventosas)",
-		medicamento: "Traumeel tabs + CBD Cream",
+		medicamento: "Tratamiento Complementario",
 		sesiones: 4,
 		duracionFrecuencia: "30 minutos, 1 semanal x 1 mes"
 	},
 	{
 		id: "neural",
 		name: "Terapia Neural",
-		medicamento: "4 inyecciones de Neurobion 50000 IM + Traumeel tabs",
+		medicamento: "Tratamiento Complementario",
 		sesiones: 4,
 		duracionFrecuencia: "30 minutos, frecuencia a criterio médico"
 	},
 	{
 		id: "antiestres",
 		name: "Terapia Antiestrés",
-		medicamento: "4 inyecciones de Neurobion 50000 IM + Nervoheel tabs",
+		medicamento: "Tratamiento Complementario",
 		sesiones: 4,
 		duracionFrecuencia: "1 hora, 1 semanal x 1 mes"
 	}
@@ -319,6 +319,9 @@ export default function Home() {
 	const [lightboxOpen, setLightboxOpen] = useState(false);
 	const [navScrolled, setNavScrolled] = useState(false);
 
+	const [loading, setLoading] = useState(true);
+	const [loaderVisible, setLoaderVisible] = useState(true);
+
 	// Scroll listener to toggle navbar transparency
 	useEffect(() => {
 		const handleScroll = () => {
@@ -333,10 +336,250 @@ export default function Home() {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
+	// Page Loader Timeout
+	useEffect(() => {
+		const fadeTimer = setTimeout(() => {
+			setLoaderVisible(false);
+		}, 300);
+		const removeTimer = setTimeout(() => {
+			setLoading(false);
+		}, 800); // 300ms + 500ms fade transition
+		return () => {
+			clearTimeout(fadeTimer);
+			clearTimeout(removeTimer);
+		};
+	}, []);
+
 	const containerRef = useRef<HTMLDivElement>(null);
 	const mobileMenuRef = useRef<HTMLDivElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const canvasNosotrosRef = useRef<HTMLCanvasElement>(null);
+	const canvasLoaderRef = useRef<HTMLCanvasElement>(null);
+
+	// DNA and Circular Membrane Animation Loop for Page Loader
+	useEffect(() => {
+		const canvas = canvasLoaderRef.current;
+		if (!canvas) return;
+
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return;
+
+		let animationFrameId: number;
+		let rotationPhase = 0;
+
+		const floatingMolecules = [
+			{ xA: 28, yA: 36, xB: 33, yB: 28, rA: 1.5, rB: 1.0, speed: 0.015, angle: Math.random() * Math.PI },
+			{ xA: 72, yA: 34, xB: 66, yB: 28, rA: 1.0, rB: 1.8, speed: 0.012, angle: Math.random() * Math.PI },
+			{ xA: 68, yA: 68, xB: 74, yB: 62, rA: 1.5, rB: 1.0, speed: 0.018, angle: Math.random() * Math.PI }
+		];
+
+		const resizeCanvas = () => {
+			const size = 240;
+			const dpr = window.devicePixelRatio || 1;
+			canvas.width = size * dpr;
+			canvas.height = size * dpr;
+			ctx.scale(dpr, dpr);
+			canvas.style.width = `${size}px`;
+			canvas.style.height = `${size}px`;
+		};
+
+		resizeCanvas();
+
+		const drawBlueprint = (width: number) => {
+			const c = width / 2;
+			ctx.clearRect(0, 0, width, width);
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.15)";
+			ctx.lineWidth = 0.5;
+
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.46, 0, Math.PI * 2);
+			ctx.stroke();
+
+			ctx.save();
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.3)";
+			ctx.setLineDash([3, 3]);
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.40, 0, Math.PI * 2);
+			ctx.stroke();
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.2)";
+			ctx.setLineDash([1, 5]);
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.30, 0, Math.PI * 2);
+			ctx.stroke();
+			ctx.restore();
+
+			ctx.save();
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.25)";
+			ctx.setLineDash([2, 4]);
+
+			ctx.beginPath();
+			ctx.moveTo(c, width * 0.04);
+			ctx.lineTo(c, width * 0.96);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(width * 0.04, c);
+			ctx.lineTo(width * 0.96, c);
+			ctx.stroke();
+			ctx.restore();
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.08)";
+			ctx.beginPath();
+			ctx.moveTo(width * 0.18, width * 0.18);
+			ctx.lineTo(width * 0.82, width * 0.82);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(width * 0.18, width * 0.82);
+			ctx.lineTo(width * 0.82, width * 0.18);
+			ctx.stroke();
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.4)";
+			ctx.lineWidth = 0.8;
+			ctx.save();
+			ctx.setLineDash([12, 4]);
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.24, 0, Math.PI * 2);
+			ctx.stroke();
+			ctx.restore();
+
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.15)";
+			ctx.lineWidth = 0.4;
+			ctx.beginPath();
+			ctx.arc(c, c, width * 0.23, 0, Math.PI * 2);
+			ctx.stroke();
+		};
+
+		const animate = () => {
+			const size = 240;
+			drawBlueprint(size);
+
+			ctx.fillStyle = "rgba(5, 131, 93, 0.35)";
+			ctx.strokeStyle = "rgba(5, 131, 93, 0.35)";
+			ctx.lineWidth = 0.5;
+
+			floatingMolecules.forEach(mol => {
+				mol.angle += mol.speed;
+				const driftX = Math.sin(mol.angle) * 1.5;
+				const driftY = Math.cos(mol.angle) * 1.5;
+
+				const xA = (mol.xA + driftX) * (size / 100);
+				const yA = (mol.yA + driftY) * (size / 100);
+				const xB = (mol.xB + driftX) * (size / 100);
+				const yB = (mol.yB + driftY) * (size / 100);
+
+				ctx.beginPath();
+				ctx.moveTo(xA, yA);
+				ctx.lineTo(xB, yB);
+				ctx.stroke();
+
+				ctx.beginPath();
+				ctx.arc(xA, yA, mol.rA, 0, Math.PI * 2);
+				ctx.fill();
+
+				ctx.beginPath();
+				ctx.arc(xB, yB, mol.rB, 0, Math.PI * 2);
+				ctx.fill();
+			});
+
+			rotationPhase += 0.015;
+			const nodeCount = 14;
+			const dnaPoints: Array<{ xA: number; y: number; zA: number; xB: number; zB: number }> = [];
+
+			const frequency = (3 * Math.PI) / (nodeCount - 1);
+			for (let i = 0; i < nodeCount; i++) {
+				const yPercent = 15 + i * (70 / (nodeCount - 1));
+				const y = yPercent * (size / 100);
+				const angle = i * frequency + rotationPhase;
+
+				const sinVal = Math.sin(angle);
+				const cosVal = Math.cos(angle);
+
+				const xA = (50 + 13 * sinVal) * (size / 100);
+				const xB = (50 - 13 * sinVal) * (size / 100);
+
+				dnaPoints.push({ xA, y, zA: cosVal, xB, zB: -cosVal });
+			}
+
+			dnaPoints.forEach((pt, idx) => {
+				ctx.strokeStyle = `rgba(5, 66, 115, ${0.35 + pt.zA * 0.2})`;
+				ctx.lineWidth = 0.8;
+				ctx.beginPath();
+				ctx.moveTo(pt.xA, pt.y);
+				ctx.lineTo(pt.xB, pt.y);
+				ctx.stroke();
+			});
+
+			ctx.beginPath();
+			ctx.strokeStyle = "rgba(5, 66, 115, 0.45)";
+			ctx.lineWidth = 1.2;
+			ctx.moveTo(dnaPoints[0].xA, dnaPoints[0].y);
+			for (let i = 1; i < dnaPoints.length; i++) {
+				const xc = (dnaPoints[i - 1].xA + dnaPoints[i].xA) / 2;
+				const yc = (dnaPoints[i - 1].y + dnaPoints[i].y) / 2;
+				ctx.quadraticCurveTo(dnaPoints[i - 1].xA, dnaPoints[i - 1].y, xc, yc);
+			}
+			ctx.lineTo(dnaPoints[dnaPoints.length - 1].xA, dnaPoints[dnaPoints.length - 1].y);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.strokeStyle = "rgba(74, 66, 56, 0.6)";
+			ctx.lineWidth = 1.2;
+			ctx.moveTo(dnaPoints[0].xB, dnaPoints[0].y);
+			for (let i = 1; i < dnaPoints.length; i++) {
+				const xc = (dnaPoints[i - 1].xB + dnaPoints[i].xB) / 2;
+				const yc = (dnaPoints[i - 1].y + dnaPoints[i].y) / 2;
+				ctx.quadraticCurveTo(dnaPoints[i - 1].xB, dnaPoints[i - 1].y, xc, yc);
+			}
+			ctx.lineTo(dnaPoints[dnaPoints.length - 1].xB, dnaPoints[dnaPoints.length - 1].y);
+			ctx.stroke();
+
+			dnaPoints.forEach((pt, idx) => {
+				const sizeFactorA = pt.zA * 0.35 + 1.0;
+				const sizeFactorB = pt.zB * 0.35 + 1.0;
+
+				const rA = sizeFactorA * 2.2;
+				const rB = sizeFactorB * 2.2;
+
+				const opacityA = pt.zA * 0.3 + 0.65;
+				const opacityB = pt.zB * 0.3 + 0.65;
+
+				const isGreenA = idx % 3 === 0;
+				const isGreenB = idx % 3 === 2;
+
+				ctx.fillStyle = isGreenA
+					? `rgba(5, 131, 93, ${opacityA})`
+					: `rgba(5, 66, 115, ${opacityA})`;
+				ctx.beginPath();
+				ctx.arc(pt.xA, pt.y, rA, 0, Math.PI * 2);
+				ctx.fill();
+
+				ctx.fillStyle = isGreenB
+					? `rgba(5, 131, 93, ${opacityB})`
+					: `rgba(5, 66, 115, ${opacityB})`;
+				ctx.beginPath();
+				ctx.arc(pt.xB, pt.y, rB, 0, Math.PI * 2);
+				ctx.fill();
+
+				if (Math.abs(pt.xA - pt.xB) < 2.5) {
+					ctx.fillStyle = `rgba(5, 66, 115, 0.8)`;
+					ctx.beginPath();
+					ctx.arc((pt.xA + pt.xB) / 2, pt.y, 2.2, 0, Math.PI * 2);
+					ctx.fill();
+				}
+			});
+
+			animationFrameId = requestAnimationFrame(animate);
+		};
+
+		animate();
+
+		return () => {
+			cancelAnimationFrame(animationFrameId);
+		};
+	}, [loaderVisible]);
 
 	// GSAP Fullscreen Mobile Menu Animation Effect
 	useEffect(() => {
@@ -1393,9 +1636,21 @@ export default function Home() {
 
 	return (
 		<div id="smooth-wrapper" ref={containerRef}>
+			{/* Page Loader Overlay */}
+			{loading && (
+				<div
+					className={`fixed inset-0 bg-[#faf6eb] z-[9999] flex flex-col items-center justify-center transition-opacity duration-500 ease-in-out ${loaderVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+						}`}
+				>
+					<div className="w-[240px] h-[240px] relative flex items-center justify-center">
+						<canvas ref={canvasLoaderRef} className="rounded-full" />
+					</div>
+				</div>
+			)}
+
 			{/* Navigation */}
 			<nav
-				className={`hero-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 md:px-12 md:py-4 text-sm transition-all duration-300 ${navScrolled
+				className={`hero-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 md:px-12 md:py-4 text-sm ${navScrolled
 					? "bg-[#faf6eb]/70 backdrop-blur-xl"
 					: "bg-transparent"
 					}`}
@@ -1408,7 +1663,7 @@ export default function Home() {
 						width={200}
 						height={60}
 						className="h-12 w-auto object-contain transition-all duration-300"
-						style={{ filter: navScrolled ? "none" : "brightness(0) invert(1)" }}
+						style={{ filter: !navScrolled ? "none" : "none" }}
 						priority
 					/>
 				</div>
@@ -1574,7 +1829,7 @@ export default function Home() {
 											MEJORA TU SALUD DESDE LA MOLÉCULA
 										</h2>
 										<p className="text-sm sm:text-base md:text-lg text-white/90 leading-relaxed max-w-xl font-normal drop-shadow-xs">
-											Medicina funcional, regenerativa y terapias avanzadas para tratar enfermedades crónicas, neurológicas y metabólicas desde la causa raíz.
+											Medicina ortomolecular, homeopática, regenerativa y terapias alternativas para tratar las enfermedades desde el origen.
 										</p>
 									</div>
 
@@ -1758,7 +2013,7 @@ export default function Home() {
 							</span>
 
 							{/* Dotted separator line */}
-							<div className="nosotros-reveal text-[#054273]/30 tracking-widest font-mono text-sm mb-18 select-none" style={{ opacity: 0 }}>
+							<div className="nosotros-reveal text-[#054273]/30 tracking-widest font-mono text-sm mb-4 select-none" style={{ opacity: 0 }}>
 								......................
 							</div>
 
@@ -1932,7 +2187,7 @@ export default function Home() {
 											<path d="M12 2v7M12 15v7M2 12h7M15 12h7M19 5l-5 5M10 14l-5 5" />
 										</svg>
 									</div>
-									<h3 className="text-[#054273] text-xl font-bold mb-3 uppercase tracking-tight">Dolor en Articulaciones</h3>
+									<h3 className="text-[#054273] text-xl font-bold mb-3 uppercase tracking-tight">Enfermedades Articulares</h3>
 								</div>
 							</div>
 
@@ -1980,11 +2235,11 @@ export default function Home() {
 					<div className="max-w-7xl mx-auto">
 						<div className="text-center max-w-3xl mx-auto mb-16">
 							<h2 className="terapias-reveal text-xs font-semibold uppercase tracking-[0.25em] text-[#05835d] mb-4" style={{ opacity: 0 }}>Terapias Alternativas Especializadas</h2>
-							<h3 className="terapias-reveal text-4xl sm:text-5xl font-semibold tracking-tight text-[#054273] font-serif mb-6" style={{ opacity: 0 }}>
-								Terapias Alternativas y Complementarias
+							<h3 className="terapias-reveal text-5xl sm:text-6xl font-semibold tracking-tight text-[#054273] font-serif mb-6" style={{ opacity: 0 }}>
+								Terapias Alternativas
 							</h3>
 							<p className="terapias-reveal text-base text-[#1F384D] opacity-90 leading-relaxed" style={{ opacity: 0 }}>
-								Ofrecemos procedimientos diseñados meticulosamente para estimular la autocuración, aliviar el dolor, mejorar la circulación y regenerar tejidos desde la raíz biológica.
+								Ofrecemos terapias diseñadas para estimular la autocuración, aliviar el dolor, mejorar la circulación y regenerar tejidos desde la célula.
 							</p>
 						</div>
 
@@ -2091,7 +2346,7 @@ export default function Home() {
 								Planes de Salud Celular Integrales
 							</h3>
 							<p className="planes-reveal text-base text-[#1F384D] opacity-90 leading-relaxed" style={{ opacity: 0 }}>
-								Programas médicos diseñados meticulosamente con exámenes diagnósticos de laboratorio, consultas, desintoxicación celular y sueroterapias específicas.
+								Diseñados para ayudar a restablecer, regular y optimizar el funcionamiento del organismo.
 							</p>
 						</div>
 
@@ -2100,7 +2355,7 @@ export default function Home() {
 							{/* Left: Tab selection list */}
 							<div className="planes-tabs lg:col-span-4 max-h-[550px] overflow-y-auto border border-[#054273]/10 rounded-2xl bg-[#E5E1D8]/45 p-4 pr-2 scrollbar-thin scrollbar-thumb-[#054273]/20" style={{ opacity: 0 }}>
 								<span className="text-[10px] font-bold uppercase tracking-wider text-[#054273]/70 px-2 pb-2 block border-b border-[#054273]/5">
-									Seleccione un plan de salud
+									Seleccione un plan de salud integral
 								</span>
 								<div className="flex flex-col gap-1 mt-2">
 									{PLANS_DATA.map((plan, idx) => (
@@ -2175,7 +2430,7 @@ export default function Home() {
 									{/* Exámenes de laboratorio list */}
 									<div>
 										<h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#054273] mb-3">
-											Paquete de Exámenes de Laboratorio Clínico Incluidos:
+											Paquete de Exámenes clínicos de laboratorio incluidos:
 										</h5>
 										<div className="flex flex-wrap gap-1.5">
 											{activePlan.examenes.map((ex, idx) => (
@@ -2622,7 +2877,7 @@ export default function Home() {
 								</a>
 							</div>
 							<p className="text-[11px] text-[#D9D4CC]/60 max-w-sm text-center md:text-left leading-relaxed">
-								New Life Centro Médico de Medicina Integrativa y Terapias Alternativas. Restaurando el equilibrio biochemical desde la célula. Tegucigalpa, Honduras.
+								New Life Centro Médico de Medicina Integrativa y Terapias Alternativas. Restaurando el equilibrio bioquímico desde la célula. Tegucigalpa, Honduras.
 							</p>
 						</div>
 
