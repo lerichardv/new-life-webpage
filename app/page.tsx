@@ -189,8 +189,7 @@ const PLANS_DATA: Plan[] = [
 		sueroterapia: "4 sesiones de Sueroterapia Ortomolecular (1 sesión semanal durante 1 mes)",
 		medicacion: "Fitoterapia antiinflamatoria prostática oral",
 		examenes: [
-			"PCR", "Hemograma completo", "Factor Reumatoideo", "Creatinina", "TSH", "T3 total", "T4 total",
-			"TGO", "TGP", "Colesterol LDL", "Colesterol HDL", "Colesterol Total", "Triglicéridos", "Vitamina D"
+			"EGO", "PSA", "Creatinina", "Vitamina D", "Ultrasonido de Próstata"
 		]
 	},
 	{
@@ -203,8 +202,7 @@ const PLANS_DATA: Plan[] = [
 		sueroterapia: "4 sesiones de Sueroterapia Ortomolecular (1 sesión semanal durante 1 mes)",
 		medicacion: "Medicación oral moduladora celular y protectora cutánea",
 		examenes: [
-			"PCR", "Hemograma completo", "Factor Reumatoideo", "Creatinina", "TSH", "T3 total", "T4 total",
-			"TGO", "TGP", "Colesterol LDL", "Colesterol HDL", "Colesterol Total", "Triglicéridos", "Vitamina D"
+			"Inmunoglobulina IgE", "Vitamina D", "Creatinina", "Hemograma completo", "TGO", "TGP", "Glucosa en ayunas"
 		]
 	},
 	{
@@ -309,6 +307,32 @@ const TERAPIAS_DATA: Terapia[] = [
 ];
 
 const VALORES = ["Fe", "Responsabilidad", "Confiabilidad", "Credibilidad", "Integridad", "Honestidad", "Trato humano", "Honradez", "Respeto", "Sinceridad"];
+
+// Helper function to map Terapia ID to its corresponding image path
+const getTerapiaImage = (id: string) => {
+	switch (id) {
+		case "acupuntura":
+			return "/images/terapias/acupuntura.jpg";
+		case "autohemoterapia":
+			return "/images/terapias/autohemoterapia.jpg";
+		case "desintoxicacion":
+			return "/images/terapias/desintoxicacion-ionica.jpeg";
+		case "prp-patelar":
+			return "/images/terapias/plasma-rico-en-rodilla.jpg";
+		case "prp-alopecia":
+			return "/images/terapias/plasma-rico-caida-de-cabello.jpg";
+		case "presoterapia":
+			return "/images/leg.jpg";
+		case "cupping":
+			return "/images/terapias/cupping.jpg";
+		case "neural":
+			return "/images/terapias/terapia-neural.jpg";
+		case "antiestres":
+			return "/images/terapias/acupuntura.jpg";
+		default:
+			return "/images/terapias/acupuntura.jpg";
+	}
+};
 
 export default function Home() {
 	const [selectedPlanIndex, setSelectedPlanIndex] = useState<number>(0);
@@ -1336,6 +1360,23 @@ export default function Home() {
 				}
 			);
 
+			// 1b. Filosofía Section (Misión, Visión, Valores)
+			gsap.fromTo("#filosofia .filosofia-reveal",
+				{ opacity: 0, y: 30 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.8,
+					ease: "power3.out",
+					stagger: 0.12,
+					scrollTrigger: {
+						trigger: "#filosofia",
+						start: "top 75%",
+						toggleActions: "play none none none"
+					}
+				}
+			);
+
 
 			// 3. Enfermedades Section (Pin & Stagger Curtain reveal)
 			gsap.fromTo("#enfermedades .enfermedades-reveal",
@@ -2046,6 +2087,61 @@ export default function Home() {
 					</div>
 				</section>
 
+				{/* Section: Misión, Visión y Valores */}
+				<section id="filosofia" className="py-24 px-6 md:px-12 lg:px-24 bg-[#FCFAF7] border-t border-[#054273]/10 relative overflow-hidden">
+					<div className="max-w-7xl mx-auto w-full">
+						<div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+							{/* Left Column: Misión y Visión (Grid columns 7) */}
+							<div className="lg:col-span-7 flex flex-col gap-8 justify-between">
+								{/* Misión Card */}
+								<div className="filosofia-reveal bg-white/60 border border-[#054273]/10 rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-full" style={{ opacity: 0 }}>
+									<div>
+										<div className="flex items-center gap-3 mb-4">
+											<span className="text-[10px] font-bold tracking-[0.25em] text-[#05835d] uppercase font-mono">NUESTRO PROPÓSITO</span>
+										</div>
+										<h3 className="text-3xl font-semibold tracking-tight text-[#054273] font-serif mb-4">Misión</h3>
+										<p className="text-sm sm:text-base text-[#1F384D]/90 leading-relaxed font-normal">
+											“Transformar la calidad de vida de nuestros pacientes a través de la Medicina Ortomolecular y Terapias Alternativas, restaurando el equilibrio bioquímico desde la célula para lograr una salud integral, consciente y duradera.”
+										</p>
+									</div>
+								</div>
+
+								{/* Visión Card */}
+								<div className="filosofia-reveal bg-white/60 border border-[#054273]/10 rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-full" style={{ opacity: 0 }}>
+									<div>
+										<div className="flex items-center gap-3 mb-4">
+											<span className="text-[10px] font-bold tracking-[0.25em] text-[#05835d] uppercase font-mono">NUESTRO FUTURO</span>
+										</div>
+										<h3 className="text-3xl font-semibold tracking-tight text-[#054273] font-serif mb-4">Visión</h3>
+										<p className="text-sm sm:text-base text-[#1F384D]/90 leading-relaxed font-normal">
+											“Ser el centro médico de referencia líder en medicina Ortomolecular y Terapias Alternativas, reconocidos por nuestra excelencia científica y trato humano. Aspiramos a transformar el paradigma de la salud, pasando de la cura de las enfermedades a la optimización de la vida humana, un paciente y una célula a la vez.”
+										</p>
+									</div>
+								</div>
+							</div>
+
+							{/* Right Column: Valores (Grid columns 5) */}
+							<div className="filosofia-reveal lg:col-span-5 bg-[#E5E1D8]/30 border border-[#054273]/10 rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between" style={{ opacity: 0 }}>
+								<div>
+									<div className="flex items-center gap-3 mb-6">
+										<span className="text-[10px] font-bold tracking-[0.25em] text-[#05835d] uppercase font-mono">NUESTROS PILARES</span>
+									</div>
+									<h3 className="text-3xl font-semibold tracking-tight text-[#054273] font-serif mb-8">Valores que nos destacan</h3>
+
+									<div className="grid grid-cols-2 gap-y-5 gap-x-6">
+										{VALORES.map((valor, i) => (
+											<div key={i} className="flex items-center gap-3 text-xs font-semibold uppercase tracking-wider text-[#1F384D]/90 hover:text-[#054273] transition-colors duration-200 cursor-default">
+												<span className="w-1.5 h-1.5 rounded-full bg-[#c1aa58] shrink-0"></span>
+												<span>{valor}</span>
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
 				{/* Section: Enfermedades que tratamos (Cortina Transition) */}
 				<section id="enfermedades" className="w-full relative overflow-hidden bg-[#F5F0E5] p-0 h-screen flex flex-col justify-between">
 
@@ -2268,69 +2364,84 @@ export default function Home() {
 							</div>
 
 							{/* Right: Selected Terapia details card */}
-							<div className="terapias-content lg:col-span-8 bg-white/60 border border-[#054273]/10 rounded-2xl p-8 shadow-md relative min-h-[400px] flex flex-col justify-between" style={{ opacity: 0 }}>
-								<div>
-									<div className="flex items-start justify-between flex-wrap gap-4 mb-6">
-										<div>
-											<h4 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#054273] font-serif">
-												{activeTerapia.name}
-											</h4>
+							<div className="terapias-content lg:col-span-8 bg-white/60 border border-[#054273]/10 rounded-2xl shadow-md relative min-h-[400px] flex flex-col md:flex-row overflow-hidden" style={{ opacity: 0 }}>
+								{/* Content taking 1/2 space */}
+								<div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-between">
+									<div>
+										<div className="flex items-start justify-between flex-wrap gap-4 mb-6">
+											<div>
+												<h4 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#054273] font-serif">
+													{activeTerapia.name}
+												</h4>
+											</div>
+											{/* <div className="text-[#c1aa58] text-2xl font-bold select-none">*</div> */}
 										</div>
-										<div className="text-[#c1aa58] text-2xl font-bold select-none">*</div>
+
+										{/* Terapia Components info */}
+										<div className="mb-8 border-t border-b border-[#054273]/10 py-6">
+											<h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#054273] mb-4">
+												Detalles de la Terapia
+											</h5>
+											<div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-medium text-[#1F384D]/90">
+												<div className="flex flex-col gap-1.5">
+													<span className="text-[10px] uppercase tracking-wider text-[#05835d]">Medicamento de Soporte</span>
+													<div className="flex items-start gap-2.5">
+														<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+															<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+														</svg>
+														<span className="font-semibold text-sm">{activeTerapia.medicamento}</span>
+													</div>
+												</div>
+												<div className="flex flex-col gap-1.5">
+													<span className="text-[10px] uppercase tracking-wider text-[#05835d]">Número de Sesiones Recomendadas</span>
+													<div className="flex items-start gap-2.5">
+														<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+															<path d="M9 11l3 3L22 4"></path>
+															<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+														</svg>
+														<span className="font-semibold text-sm">{activeTerapia.sesiones} {activeTerapia.sesiones === 1 ? 'sesión' : 'sesiones'}</span>
+													</div>
+												</div>
+												<div className="flex flex-col gap-1.5 md:col-span-2">
+													<span className="text-[10px] uppercase tracking-wider text-[#05835d]">Duración por Sesión / Frecuencia</span>
+													<div className="flex items-start gap-2.5">
+														<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+															<circle cx="12" cy="12" r="10"></circle>
+															<polyline points="12 6 12 12 16 14"></polyline>
+														</svg>
+														<span className="font-semibold text-sm">{activeTerapia.duracionFrecuencia}</span>
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
 
-									{/* Terapia Components info */}
-									<div className="mb-8 border-t border-b border-[#054273]/10 py-6">
-										<h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#054273] mb-4">
-											Detalles de la Terapia
-										</h5>
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-medium text-[#1F384D]/90">
-											<div className="flex flex-col gap-1.5">
-												<span className="text-[10px] uppercase tracking-wider text-[#05835d]">Medicamento de Soporte</span>
-												<div className="flex items-start gap-2.5">
-													<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-														<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-													</svg>
-													<span className="font-semibold text-sm">{activeTerapia.medicamento}</span>
-												</div>
-											</div>
-											<div className="flex flex-col gap-1.5">
-												<span className="text-[10px] uppercase tracking-wider text-[#05835d]">Número de Sesiones Recomendadas</span>
-												<div className="flex items-start gap-2.5">
-													<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-														<path d="M9 11l3 3L22 4"></path>
-														<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-													</svg>
-													<span className="font-semibold text-sm">{activeTerapia.sesiones} {activeTerapia.sesiones === 1 ? 'sesión' : 'sesiones'}</span>
-												</div>
-											</div>
-											<div className="flex flex-col gap-1.5 md:col-span-2">
-												<span className="text-[10px] uppercase tracking-wider text-[#05835d]">Duración por Sesión / Frecuencia</span>
-												<div className="flex items-start gap-2.5">
-													<svg className="w-4 h-4 text-[#05835d] mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-														<circle cx="12" cy="12" r="10"></circle>
-														<polyline points="12 6 12 12 16 14"></polyline>
-													</svg>
-													<span className="font-semibold text-sm">{activeTerapia.duracionFrecuencia}</span>
-												</div>
-											</div>
-										</div>
+									{/* Booking CTA button */}
+									<div className="mt-0 pt-0 flex items-center justify-between flex-wrap gap-4">
+										<span className="text-xs text-[#1F384D]/75 font-semibold">
+											* Todos los tratamientos se realizan bajo estricta supervisión médica en nuestras instalaciones.
+										</span>
+										<a
+											href={`https://wa.me/50498580298?text=${encodeURIComponent(`Hola! Me interesa agendar una cita para la terapia: ${activeTerapia.name}.`)}`}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="px-6 py-2.5 rounded-full bg-[#05835d] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#054273] transition-colors shadow-sm cursor-pointer"
+										>
+											Solicitar Terapia
+										</a>
 									</div>
 								</div>
 
-								{/* Booking CTA button */}
-								<div className="mt-8 pt-6 border-t border-[#054273]/10 flex items-center justify-between flex-wrap gap-4">
-									<span className="text-xs text-[#1F384D]/75 font-semibold">
-										* Todos los tratamientos se realizan bajo estricta supervisión médica en nuestras instalaciones.
-									</span>
-									<a
-										href={`https://wa.me/50498580298?text=${encodeURIComponent(`Hola! Me interesa agendar una cita para la terapia: ${activeTerapia.name}.`)}`}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="px-6 py-2.5 rounded-full bg-[#05835d] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#054273] transition-colors shadow-sm cursor-pointer"
-									>
-										Solicitar Terapia {activeTerapia.name}
-									</a>
+								{/* Image taking 1/2 space */}
+								<div className="w-full md:w-1/2 min-h-[300px] md:min-h-full relative bg-[#FAF7F0] border-t md:border-t-0 md:border-l border-[#054273]/10">
+									<Image
+										src={getTerapiaImage(activeTerapia.id)}
+										alt={activeTerapia.name}
+										fill
+										sizes="(max-width: 768px) 100vw, 50vw"
+										className="object-cover"
+										priority
+									/>
 								</div>
 							</div>
 						</div>
