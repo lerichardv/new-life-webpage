@@ -322,7 +322,7 @@ const getTerapiaImage = (id: string) => {
 		case "prp-alopecia":
 			return "/images/terapias/plasma-rico-caida-de-cabello.jpg";
 		case "presoterapia":
-			return "/images/leg.jpg";
+			return "/images/terapias/presoterapia.jpg";
 		case "cupping":
 			return "/images/terapias/cupping.jpg";
 		case "neural":
